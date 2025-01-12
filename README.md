@@ -1,5 +1,25 @@
 # Getting Started with Create React App
 
+STRUCT
+
+/src
+  /api          # For API-related files (e.g., Axios or fetch configurations)
+  /assets       # For static files like images, fonts, etc.
+  /components   # Reusable components
+    /Auth       # Components for SignIn/SignUp
+    /Common     # Shared components like Buttons, Modals, Inputs, etc.
+  /context      # Context API files for global state management
+  /hooks        # Custom hooks (e.g., useAuth, useRealTimeUpdates)
+  /pages        # Pages of your application
+    /Home       # Home page and related files
+    /Dashboard  # Dashboard page and related files
+  /services     # Service files for managing WebSocket or API calls
+  /styles       # Global and component-specific styles (e.g., CSS or SCSS files)
+  /utils        # Utility functions like date formatting, validation, etc.
+  /config       # Configuration files (e.g., environment variables, constants)
+  /App.js       # Main App component
+  /index.js     # Entry point of the application
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
@@ -68,3 +88,5 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
