@@ -19,14 +19,14 @@ function App() {
     e.preventDefault();
     console.log(e, "ee");
     try {
-      console.log(JSON.stringify({ usename: signInData.username, password: signInData }), "sendata");
-
       const Signres = await fetch("http://localhost:8080/api/login",
         {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify(signInData),
         });
+      console.log(Signres, "Signres");
+
       Signres.ok
         ? toast.success("Login successful!", { position: "top-right", autoClose: 3000 }) && setLoggedIn(true)
         : toast.error("Invalid credentials, please try again.", { position: "top-right", autoClose: 3000 });
@@ -43,6 +43,10 @@ function App() {
     !loggedIn ? <div className={`container ${isSignUpMode ? "sign-up-mode" : ""}`}>
       <ToastContainer />
       <div className="forms-container">
+        <img src="/assets/pxlogo.png" alt="Logo" className="fixed-logo" />
+        <h1 className="fixed-logo-content" style={{ paddingRight: "10rem", marginTop: "-1rem" }}>Tech Titans
+
+        </h1>
         <div className="signin-signup">
           <form onSubmit={handleSignIn} className="sign-in-form">
             <h2>Sign in</h2>
@@ -97,6 +101,9 @@ function App() {
           <img src="/assets/register.svg" className="image" alt="Register" />
         </div>
       </div>
+      <footer className="footer">
+        <p>Created with ❤️ by <strong>Tech Titans</strong></p>
+      </footer>
     </div> : <Dashboard />
   );
 }

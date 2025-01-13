@@ -418,3 +418,31 @@ form.sign-in-form {
   box-shadow: 0 0 8px rgba(157, 0, 255, 0.6); /* Intense focus effect */
 }
 
+
+.fixed-logo {
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  z-index: 1000; 
+  width: 100px; 
+  padding: 10px; 
+}
+
+.fixed-logo img {
+  width: 100%; 
+  height: auto; 
+}
+
+.footer {
+  position: fixed; /* Ensures it's always at the bottom */
+  bottom: 0; /* Aligns it to the bottom of the viewport */
+  width: 100%; /* Makes it span the full width */
+  background-color: #282c34; /* Dark background for contrast */
+  color: #ffffff; /* White text for readability */
+  text-align: center; /* Centers the text */
+  padding: 10px 0; /* Adds vertical spacing */
+  font-size: 14px; /* Makes it appropriately small */
+  z-index: 1000; /* Keeps it above other elements */
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow */
+}
+
