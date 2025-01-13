@@ -33,7 +33,7 @@ function App() {
     } catch (e) {
       toast.error("Server error occurred. Please try again later.", { position: "top-center", autoClose: 3000 });
       console.log(e, "e");
-    }finally{
+    } finally {
       setSignInData({ email: "", password: "" });
     }
   }
@@ -41,7 +41,7 @@ function App() {
   const handleSignUp = async (e) => {
     e.preventDefault();
     try {
-      
+
       if (signUpData?.password != signUpData?.confirm_password) {
         toast.error("Password and Confirm Password doesn't match.", { position: "top-center", autoClose: 3000 });
         return;
@@ -59,7 +59,7 @@ function App() {
     } catch (e) {
       toast.error("Server error occurred. Please try again later.", { position: "top-center", autoClose: 3000 });
       console.log(e, "e");
-    }finally{
+    } finally {
       setSignInData({ email: "", password: "" });
     }
   }
@@ -68,6 +68,7 @@ function App() {
       <ToastContainer />
       <div className="forms-container">
         <img src="/assets/pxlogo.png" alt="Logo" className="fixed-logo" />
+        <h1 className="fixed-logo-content" style={{ color: `${isSignUpMode ? "#9d00ff" : "#ffffff"}` }}>Book Stock</h1>
         {/* <h1 className="fixed-logo-content" style={{ paddingRight: "10rem", marginTop: "-1rem" }}>Tech Titans </h1> */}
         <div className="signin-signup">
           <form onSubmit={handleSignIn} className="sign-in-form">
@@ -90,9 +91,9 @@ function App() {
             <h2>Sign up</h2>
             {["email", "password", "confirm_password"].map((field) => (
               <input
-                key={field} // Adding a unique key prop
+                key={field}
                 className="flds"
-                type={field === "password" ? "password" : field === "email" ? "email" : "text"}
+                type={["password", "confirm_password"].includes(field) ? "password" : field === "email" ? "email" : "text"}
                 name={field}
                 value={signUpData[field]}
                 onChange={(e) => handleChange(e, true)}
@@ -108,7 +109,7 @@ function App() {
         <div className="panel left-panel">
           <div className="content">
             <h3>New here?</h3>
-            <p>Create Account.</p>
+            <p>Start your journey with us.</p>
             <button className="btn transparent" onClick={() => setIsSignUpMode(true)}>Sign up</button>
           </div>
           <img src="/assets/log.svg" className="image" alt="Log" />
@@ -117,7 +118,7 @@ function App() {
         <div className="panel right-panel">
           <div className="content">
             <h3>One of us?</h3>
-            <p>Sign In Here.</p>
+            <p>Welcome back to your shelf!.</p>
             <button className="btn transparent" onClick={() => setIsSignUpMode(false)}>Sign in</button>
           </div>
           <img src="/assets/register.svg" className="image" alt="Register" />
@@ -126,7 +127,7 @@ function App() {
       <footer className="footer">
         <p>Created with ❤️ by <strong>Tech Titans</strong></p>
       </footer>
-    </div> : <Dashboard />
+    </div > : <Dashboard />
   );
 }
 
