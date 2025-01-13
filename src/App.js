@@ -5,14 +5,15 @@ import "react-toastify/dist/ReactToastify.css";
 import Dashboard from "./pages/Dashboard"
 function App() {
   const [isSignUpMode, setIsSignUpMode] = useState(false);
-  const [signInData, setSignInData] = useState({ username: "", password: "" });
-  const [signUpData, setSignUpData] = useState({ username: "", email: "", password: "" });
+  const [signInData, setSignInData] = useState({ email: "", password: "" });
+  const [signUpData, setSignUpData] = useState({ email: "", password: "" });
   const [loggedIn, setLoggedIn] = useState(false);
+  const [signedIn, setSignedIn] = useState(false);
 
   const handleChange = (e, isSignUp) => {
     const setter = isSignUp ? setSignUpData : setSignInData;
     setter((prevData) => ({ ...prevData, [e.target.name]: e.target.value }));
-    console.log(signInData, "signInData");
+    console.log(signInData, "signInData", "signUpData", signUpData);
   };
 
   const handleSignIn = async (e) => {
@@ -23,34 +24,55 @@ function App() {
         {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify(signInData),
+          body: JSON.stringify({ username: signInData.email, password: signInData.password }),
         });
-      console.log(Signres, "Signres");
-
+      // console.log(await Signres.text(), "Signres");
       Signres.ok
         ? toast.success("Login successful!", { position: "top-right", autoClose: 3000 }) && setLoggedIn(true)
         : toast.error("Invalid credentials, please try again.", { position: "top-right", autoClose: 3000 });
     } catch (e) {
       toast.error("Server error occurred. Please try again later.", { position: "top-center", autoClose: 3000 });
       console.log(e, "e");
+    }finally{
+      setSignInData({ email: "", password: "" });
     }
   }
 
   const handleSignUp = async (e) => {
-    toast.error("Comming Soon.", { position: "top-right", autoClose: 3000 });
+    e.preventDefault();
+    try {
+      
+      if (signUpData?.password != signUpData?.confirm_password) {
+        toast.error("Password and Confirm Password doesn't match.", { position: "top-center", autoClose: 3000 });
+        return;
+      }
+      const Signupres = await fetch("http://localhost:8080/api/register",
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ username: signUpData.email, password: signUpData.password }),
+        });
+      console.log(Signupres.json(), "Signupres", signUpData);
+      Signupres.ok
+        ? toast.success("Sign Up successful!", { position: "top-right", autoClose: 3000 }) && setSignedIn(true)
+        : toast.error("Sign Up Failed, please try again.", { position: "top-right", autoClose: 3000 });
+    } catch (e) {
+      toast.error("Server error occurred. Please try again later.", { position: "top-center", autoClose: 3000 });
+      console.log(e, "e");
+    }finally{
+      setSignInData({ email: "", password: "" });
+    }
   }
   return (
     !loggedIn ? <div className={`container ${isSignUpMode ? "sign-up-mode" : ""}`}>
       <ToastContainer />
       <div className="forms-container">
         <img src="/assets/pxlogo.png" alt="Logo" className="fixed-logo" />
-        <h1 className="fixed-logo-content" style={{ paddingRight: "10rem", marginTop: "-1rem" }}>Tech Titans
-
-        </h1>
+        {/* <h1 className="fixed-logo-content" style={{ paddingRight: "10rem", marginTop: "-1rem" }}>Tech Titans </h1> */}
         <div className="signin-signup">
           <form onSubmit={handleSignIn} className="sign-in-form">
             <h2>Sign in</h2>
-            {["username", "password"].map((field) => (
+            {["email", "password"].map((field) => (
               <input
                 key={field} // Adding a unique key prop
                 className="flds"
@@ -66,7 +88,7 @@ function App() {
 
           <form onSubmit={handleSignUp} className="sign-up-form">
             <h2>Sign up</h2>
-            {["username", "email", "password"].map((field) => (
+            {["email", "password", "confirm_password"].map((field) => (
               <input
                 key={field} // Adding a unique key prop
                 className="flds"
