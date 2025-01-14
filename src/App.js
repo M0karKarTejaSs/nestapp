@@ -53,9 +53,13 @@ function App() {
           body: JSON.stringify({ username: signUpData.email, password: signUpData.password }),
         });
       console.log(Signupres.json(), "Signupres", signUpData);
-      Signupres.ok
-        ? toast.success("Sign Up successful!", { position: "top-right", autoClose: 3000 }) && setSignedIn(true)
-        : toast.error("Sign Up Failed, please try again.", { position: "top-right", autoClose: 3000 });
+      if (Signupres.ok) {
+        toast.success("Sign Up successful! Redirecting to login.", { position: "top-right", autoClose: 3000 });
+        setIsSignUpMode(false); // Switch to login form
+        setSignUpData({ email: "", password: "", confirm_password: "" }); // Clear the signup form
+      } else {
+        toast.error("Sign Up Failed, please try again.", { position: "top-right", autoClose: 3000 });
+      }
     } catch (e) {
       toast.error("Server error occurred. Please try again later.", { position: "top-center", autoClose: 3000 });
       console.log(e, "e");
@@ -85,6 +89,13 @@ function App() {
               />
             ))}
             <input type="submit" class="flds" value="Sign In" className="btn solid" />
+            <button
+              type="button"
+              className="fg-btn"
+              // onClick={handleForgotPassword}
+            >
+              Forgot Password?
+            </button>
           </form>
 
           <form onSubmit={handleSignUp} className="sign-up-form">
