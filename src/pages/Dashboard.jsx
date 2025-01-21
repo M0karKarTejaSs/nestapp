@@ -59,7 +59,7 @@ const Dashboard = ({
           <li>
             <a href="#" className="logout">
               <i className="bx bxs-log-out-circle"></i>
-              <span className="text">Logout</span>
+              {/* <span className="text">Logout</span> */}
             </a>
           </li>
         </ul>

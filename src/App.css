@@ -476,7 +476,7 @@ form.sign-in-form {
   /* Adds a subtle shadow */
 }
 
-.fg-btn{
+.fg-btn {
   color: black;
   text-decoration: none;
   border: none;
@@ -621,7 +621,8 @@ form.sign-in-form {
   padding: 20px;
   background-color: #f8f9fc;
   color: #333;
-  margin-left: 250px; /* Adjust if Sidebar width changes */
+  margin-left: 250px;
+  /* Adjust if Sidebar width changes */
 }
 
 /* Sections */
@@ -631,11 +632,13 @@ form.sign-in-form {
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-left: 5px solid #6c5ce7; /* Purple accent */
+  border-left: 5px solid #6c5ce7;
+  /* Purple accent */
 }
 
 .section h2 {
-  color: #6c5ce7; /* Purple theme */
+  color: #6c5ce7;
+  /* Purple theme */
   margin-bottom: 10px;
 }
 
@@ -654,7 +657,8 @@ form.sign-in-form {
 
 .card {
   flex: 1;
-  background-color: #6c5ce7; /* Purple background */
+  background-color: #6c5ce7;
+  /* Purple background */
   color: white;
   border-radius: 8px;
   padding: 20px;
@@ -690,14 +694,16 @@ form.sign-in-form {
 
 .book-list li:hover {
   background-color: #f3eafe;
-  color: #6c5ce7; /* Purple text on hover */
+  color: #6c5ce7;
+  /* Purple text on hover */
 }
 
 
 /* Navbar */
 .navbar {
   height: 60px;
-  background-color: #6c5ce7; /* Purple theme */
+  background-color: #6c5ce7;
+  /* Purple theme */
   color: white;
   display: flex;
   justify-content: space-between;
@@ -753,7 +759,8 @@ form.sign-in-form {
 }
 
 .icon:hover {
-  color: #a29bfe; /* Lighter purple for hover */
+  color: #a29bfe;
+  /* Lighter purple for hover */
 }
 
 
@@ -762,12 +769,14 @@ form.sign-in-form {
 /* Book Page */
 .book-page {
   padding: 20px;
-  margin-left: 250px; /* Adjust based on your sidebar width */
+  margin-left: 250px;
+  /* Adjust based on your sidebar width */
 }
 
 .page-title {
   font-size: 2rem;
-  color: #6c5ce7; /* Purple theme */
+  color: #6c5ce7;
+  /* Purple theme */
   margin-bottom: 20px;
   text-align: center;
 }
@@ -804,7 +813,8 @@ form.sign-in-form {
 
 .book-title {
   font-size: 1.5rem;
-  color: #6c5ce7; /* Purple theme */
+  color: #6c5ce7;
+  /* Purple theme */
   margin: 0;
 }
 
@@ -834,7 +844,8 @@ form.sign-in-form {
 
 .menu-link:hover {
   background-color: #f3eafe;
-  color: #6c5ce7; /* Purple hover */
+  color: #6c5ce7;
+  /* Purple hover */
 }
 
 .active {
@@ -845,50 +856,136 @@ form.sign-in-form {
 
 
 
-
-
-
-/* Genre Table Styles */
+/*genre buttons*/
+/* General Styling for Genre Page */
 .genre-page {
-  /* padding-left: 17rem; */
-  padding: 20px;
-  font-family: Arial, sans-serif;
+  font-family: 'Arial', sans-serif;
+  margin: 20px;
 }
 
-.page-title {
-  text-align: center;
-  font-size: 2em;
-  margin-bottom: 20px;
-  color: #333;
+.addGenre{
+  margin-left: 16rem;
 }
 
+/* Table Styling */
 .genre-table {
-  width: 100%;
+  width: 80%;
+  margin-left: 17rem;
   border-collapse: collapse;
-  margin: 20px 15rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .genre-table th, .genre-table td {
-  padding: 12px 15px;
+  padding: 12px 20px;
   text-align: left;
   border-bottom: 1px solid #ddd;
 }
 
 .genre-table th {
-  background-color: #4CAF50;
-  color: white;
-  font-weight: bold;
+  background-color: #f4f4f9;
 }
 
 .genre-table tr:hover {
   background-color: #f1f1f1;
 }
 
-.genre-table td {
-  background-color: #fff;
+.genre-table td i {
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin-right: 10px;
 }
 
-.genre-table td:first-child {
-  font-weight: bold;
+.genre-table td i:hover {
+  opacity: 0.7;
+}
+
+/* Edit Icon Styling */
+.edit-icon {
+  color: #ffcc00;
+}
+
+.edit-icon:hover {
+  color: #e0a800;
+}
+
+/* Delete Icon Styling */
+.delete-icon {
+  color: #dc3545;
+}
+
+.delete-icon:hover {
+  color: #c82333;
+}
+
+/* Add Genre Button Styling */
+.add-btn {
+  padding: 14px 46px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 77rem;
+}
+
+.add-btn i {
+  font-size: 1.5rem;
+}
+
+.add-genre-form {
+  width: 40%;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.add-genre-form input,
+.add-genre-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.add-genre-form button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.add-genre-form .btn-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.add-genre-form .btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.add-genre-form .btn-success:hover {
+  background-color: #218838;
+}
+
+.add-genre-form .btn-secondary:hover {
+  background-color: #5a6268;
 }

@@ -22,7 +22,7 @@ function App() {
   const handleSignIn = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8080/api/login", {
+      const response = await fetch("http://localhost:8080/auth/generateToken", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: signInData.email, password: signInData.password }),
@@ -31,6 +31,10 @@ function App() {
       if (response.ok) {
         toast.success("Login successful!", { position: "top-right", autoClose: 3000 });
         setLoggedIn(true);
+        const responseData = await response.json(); // Parse the JSON from the response
+        console.log(responseData.data, "Parsed response");
+        localStorage.setItem("AuthToken", responseData.data);
+      
       } else {
         toast.error("Invalid credentials, please try again.", { position: "top-right", autoClose: 3000 });
       }
@@ -55,7 +59,6 @@ function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: signUpData.email, password: signUpData.password }),
       });
-
       if (response.ok) {
         toast.success("Sign Up successful! Redirecting to login.", { position: "top-right", autoClose: 3000 });
         setIsSignUpMode(false);
