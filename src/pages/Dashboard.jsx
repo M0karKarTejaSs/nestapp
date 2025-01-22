@@ -51,7 +51,7 @@ const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode,
                 <tbody>
                   {['Completed', 'Pending', 'Process'].map((status, index) => (
                     <tr key={index}>
-                      <td><img src="img/people.png" alt="User" /><p>John Doe</p></td>
+                      <td><img src="/assets/user.png" alt="User" /><p>John Doe</p></td>
                       <td>01-10-2021</td>
                       <td><span className={`status ${status.toLowerCase()}`}>{status}</span></td>
                     </tr>

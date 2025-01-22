@@ -157,7 +157,7 @@
 //                         <span className="num">8</span>
 //                     </a>
 //                     <a href="#" className="profile">
-//                         <img src="img/people.png" alt="profile" />
+//                         <img src="/assets/user.png" alt="profile" />
 //                     </a>
 //                 </nav>
 //                 {/* NAVBAR */}
@@ -225,7 +225,7 @@
 //                                 <tbody>
 //                                     <tr>
 //                                         <td>
-//                                             <img src="img/people.png" alt="John Doe" />
+//                                             <img src="/assets/user.png" alt="John Doe" />
 //                                             <p>John Doe</p>
 //                                         </td>
 //                                         <td>01-10-2021</td>
@@ -233,7 +233,7 @@
 //                                     </tr>
 //                                     <tr>
 //                                         <td>
-//                                             <img src="img/people.png" alt="John Doe" />
+//                                             <img src="/assets/user.png" alt="John Doe" />
 //                                             <p>John Doe</p>
 //                                         </td>
 //                                         <td>01-10-2021</td>
@@ -241,7 +241,7 @@
 //                                     </tr>
 //                                     <tr>
 //                                         <td>
-//                                             <img src="img/people.png" alt="John Doe" />
+//                                             <img src="/assets/user.png" alt="John Doe" />
 //                                             <p>John Doe</p>
 //                                         </td>
 //                                         <td>01-10-2021</td>
@@ -249,7 +249,7 @@
 //                                     </tr>
 //                                     <tr>
 //                                         <td>
-//                                             <img src="img/people.png" alt="John Doe" />
+//                                             <img src="/assets/user.png" alt="John Doe" />
 //                                             <p>John Doe</p>
 //                                         </td>
 //                                         <td>01-10-2021</td>
@@ -257,7 +257,7 @@
 //                                     </tr>
 //                                     <tr>
 //                                         <td>
-//                                             <img src="img/people.png" alt="John Doe" />
+//                                             <img src="/assets/user.png" alt="John Doe" />
 //                                             <p>John Doe</p>
 //                                         </td>
 //                                         <td>01-10-2021</td>

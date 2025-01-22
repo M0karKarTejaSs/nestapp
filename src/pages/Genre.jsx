@@ -117,7 +117,7 @@ const Genre = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormSho
           </form>
           <label htmlFor="switch-mode" className="switch-mode" onClick={toggleDarkMode}></label>
           <a href="#" className="notification"><i className="bx bxs-bell"></i><span className="num">8</span></a>
-          <a href="#" className="profile"><img src="img/people.png" alt="profile" /></a>
+          <a href="#" className="profile"><img src="/assets/user.png" alt="profile" /></a>
         </nav>
 
         <main>
