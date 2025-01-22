@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Dash.css';
-import { Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { retToken } from '../AuthToken';
 import { jwtDecode } from 'jwt-decode';
-import Sidebar from '../components/Sidebar'; // Importing the Sidebar component
+import Sidebar from '../components/Sidebar';
+import DataTable from '../components/DataTable';
 
 const Genre = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormShown, handleSearchButtonClick }) => {
   const [genres, setGenres] = useState([]);
@@ -14,6 +14,12 @@ const Genre = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormSho
   const [currentGenre, setCurrentGenre] = useState({ genreId: '', genreName: '', description: '' });
   const [newGenre, setNewGenre] = useState({ genreName: '', description: '' });
   const [userId, setUserId] = useState(null);
+
+  const columns = [
+    { header: 'ID', accessor: 'genreId' },
+    { header: 'Genre Name', accessor: 'genreName' },
+    { header: 'Description', accessor: 'description' },
+  ];
 
   useEffect(() => {
     const token = retToken();
@@ -42,10 +48,28 @@ const Genre = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormSho
     }
   };
 
-  const handleGenreChange = (e, field) => {
-    const value = e.target.value;
-    const genreState = isEditMode ? currentGenre : newGenre;
-    isEditMode ? setCurrentGenre({ ...genreState, [field]: value }) : setNewGenre({ ...genreState, [field]: value });
+  const handleEdit = (genre) => {
+    setIsEditMode(true);
+    setIsAddGenre(true);
+    setCurrentGenre(genre);
+  };
+
+  const handleDelete = async (genre) => {
+    try {
+      const response = await fetch('http://localhost:8080/api/genre', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: retToken(),
+        },
+        body: JSON.stringify({ action: 'DELETE', genreId: genre.genreId, userId }),
+      });
+      if (!response.ok) throw new Error('Failed to delete genre');
+      setGenres((prev) => prev.filter((g) => g.genreId !== genre.genreId));
+      toast.success('Genre deleted successfully!');
+    } catch {
+      toast.error('Failed to delete genre');
+    }
   };
 
   const handleSubmit = async () => {
@@ -73,23 +97,12 @@ const Genre = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormSho
     }
   };
 
-  const deleteGenre = async (genreId) => {
-    try {
-      const response = await fetch('http://localhost:8080/api/genre', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: retToken(),
-        },
-        body: JSON.stringify({ action: 'DELETE', genreId, userId }),
-      });
-      if (!response.ok) throw new Error('Failed to delete genre');
-      setGenres((prev) => prev.filter((g) => g.genreId !== genreId));
-      toast.success('Genre deleted successfully!');
-    } catch {
-      toast.error('Failed to delete genre');
-    }
+  const handleGenreChange = (e, field) => {
+    const value = e.target.value;
+    const genreState = isEditMode ? currentGenre : newGenre;
+    isEditMode ? setCurrentGenre({ ...genreState, [field]: value }) : setNewGenre({ ...genreState, [field]: value });
   };
+
 
   const resetForm = () => {
     setIsAddGenre(false);
@@ -100,9 +113,7 @@ const Genre = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormSho
 
   return (
     <section id="dashboard">
-      {/* Dynamic Sidebar */}
       <Sidebar isSidebarHidden={isSidebarHidden} />
-
       <section id="content">
         <nav>
           <i className="bx bx-menu" onClick={toggleSidebar}></i>
@@ -116,8 +127,6 @@ const Genre = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormSho
             </div>
           </form>
           <label htmlFor="switch-mode" className="switch-mode" onClick={toggleDarkMode}></label>
-          <a href="#" className="notification"><i className="bx bxs-bell"></i><span className="num">8</span></a>
-          <a href="#" className="profile"><img src="/assets/user.png" alt="profile" /></a>
         </nav>
 
         <main>
@@ -134,38 +143,33 @@ const Genre = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormSho
           </div>
 
           {!isAddGenre ? (
-            <div className="table-data">
-              <div className="order">
-                <div className="head">
-                  <h3>Genre List</h3>
-                </div>
-                <table>
-                  <thead>
-                    <tr><th>ID</th><th>Genre Name</th><th>Description</th><th>Action</th></tr>
-                  </thead>
-                  <tbody>
-                    {genres.map((genre, index) => (
-                      <tr key={genre.genreId}>
-                        <td>{index + 1}</td>
-                        <td>{genre.genreName}</td>
-                        <td>{genre.description}</td>
-                        <td>
-                          <i onClick={() => { setIsEditMode(true); setIsAddGenre(true); setCurrentGenre(genre); }} className="bi bi-pencil-square edit-icon"></i>
-                          <i onClick={() => deleteGenre(genre.genreId)} className="bi bi-trash delete-icon"></i>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <DataTable
+              title="Genre List"
+              columns={columns}
+              data={genres}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              handleGenreChange={handleGenreChange} // Pass it as a prop
+            />
+
           ) : (
             <div className="overlay">
               <div className="add-genre-form">
-                <input type="text" placeholder="Genre Name" value={isEditMode ? currentGenre.genreName : newGenre.genreName} onChange={(e) => handleGenreChange(e, 'genreName')} />
-                <textarea placeholder="Description" value={isEditMode ? currentGenre.description : newGenre.description} onChange={(e) => handleGenreChange(e, 'description')} />
+                <input
+                  type="text"
+                  placeholder="Genre Name"
+                  value={isEditMode ? currentGenre.genreName : newGenre.genreName}
+                  onChange={(e) => handleGenreChange(e, 'genreName')}
+                />
+                <textarea
+                  placeholder="Description"
+                  value={isEditMode ? currentGenre.description : newGenre.description}
+                  onChange={(e) => handleGenreChange(e, 'description')}
+                />
                 <div className="button-container">
-                  <button onClick={handleSubmit} className="btn btn-success">{isEditMode ? 'Save Changes' : 'Add'}</button>
+                  <button onClick={handleSubmit} className="btn btn-success">
+                    {isEditMode ? 'Save Changes' : 'Add'}
+                  </button>
                   <button onClick={resetForm} className="btn btn-secondary">Cancel</button>
                 </div>
               </div>

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/Dash.css';
 import { Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { retToken } from '../AuthToken';
 import { jwtDecode } from 'jwt-decode';
+import Sidebar from '../components/Sidebar'; // Import Sidebar
+import DataTable from '../components/DataTable'; // Import DataTable
 
 const Book = ({
     toggleSidebar,
@@ -97,17 +98,17 @@ const Book = ({
         setCurrentBook({ bookId: '', title: '', price: '', rating: '', quantity: '' });
     };
 
+    const columns = [
+        { header: 'Title', accessor: 'title' },
+        { header: 'Price', accessor: 'price' },
+        { header: 'Rating', accessor: 'rating' },
+        { header: 'Quantity', accessor: 'quantity' },
+    ];
+
     return (
         <section id="dashboard">
-            <section id="sidebar" className={isSidebarHidden ? 'hide' : ''}>
-                <Link to="/" className="brand">
-                    <i className="bx bxs-smile"></i><span className="text">AdminHub</span>
-                </Link>
-                <ul className="side-menu top">
-                    <li><Link to="/"><i className="bx bxs-dashboard"></i> Dashboard</Link></li>
-                    <li className="active"><Link to="/book"><i className="bx bxs-book"></i> Books</Link></li>
-                </ul>
-            </section>
+            {/* Dynamic Sidebar */}
+            <Sidebar isSidebarHidden={isSidebarHidden} />
 
             <section id="content">
                 <nav>
@@ -159,38 +160,13 @@ const Book = ({
                             </div>
                         </div>
                     ) : (
-                        <div className="table-data">
-                            <div className="order">
-                                <div className="head">
-                                    <h3>Books List</h3>
-                                </div>
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Title</th>
-                                            <th>Price</th>
-                                            <th>Rating</th>
-                                            <th>Quantity</th> {/* Add quantity column */}
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {books.map((book) => (
-                                            <tr key={book.bookId}>
-                                                <td>{book.title}</td>
-                                                <td>{book.price}</td>
-                                                <td>{book.rating}</td>
-                                                <td>{book.quantity}</td> {/* Display quantity */}
-                                                <td>
-                                                    <i onClick={() => { setIsEditMode(true); setIsAddBook(true); setCurrentBook(book); }} className="bi bi-pencil-square edit-icon"></i>
-                                                    <i onClick={() => deleteBook(book.bookId)} className="bi bi-trash delete-icon"></i>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                        <DataTable
+                            title="Books List"
+                            columns={columns}
+                            data={books}
+                            onEdit={(book) => { setIsEditMode(true); setIsAddBook(true); setCurrentBook(book); }}
+                            onDelete={deleteBook}
+                        />
                     )}
                 </main>
             </section>
