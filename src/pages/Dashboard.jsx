@@ -36,9 +36,9 @@ const Dashboard = ({
             </Link>
           </li>
           <li>
-            <Link to="#">
+            <Link to="/book">
               <i className="bx bxs-doughnut-chart"></i>
-              <span className="text">Analytics</span>
+              <span className="text">Book</span>
             </Link>
           </li>
           <li>

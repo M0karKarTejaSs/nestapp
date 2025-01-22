@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Dashboard from "./pages/Dashboard";
 import DashboardTest from "./pages/DashboardTest";
 import Genre from "./pages/Genre";
+import Book from "./pages/Book";
 import "./App.css";
 import { useDashboard } from "../src/pages/useDashboard"
 
@@ -34,7 +35,7 @@ function App() {
         const responseData = await response.json(); // Parse the JSON from the response
         console.log(responseData.data, "Parsed response");
         localStorage.setItem("AuthToken", responseData.data);
-      
+
       } else {
         toast.error("Invalid credentials, please try again.", { position: "top-right", autoClose: 3000 });
       }
@@ -175,7 +176,27 @@ function App() {
             />
           }
         />
-        <Route path="/genre" element={<Genre />} />
+
+
+
+        <Route path="/genre" element={<Genre
+          isSidebarHidden={isSidebarHidden}
+          isSearchFormShown={isSearchFormShown}
+          isDarkMode={isDarkMode}
+          toggleSidebar={toggleSidebar}
+          toggleDarkMode={toggleDarkMode}
+          handleSearchButtonClick={handleSearchButtonClick}
+        />} />
+
+        <Route path="/book" element={<Book
+          isSidebarHidden={isSidebarHidden}
+          isSearchFormShown={isSearchFormShown}
+          isDarkMode={isDarkMode}
+          toggleSidebar={toggleSidebar}
+          toggleDarkMode={toggleDarkMode}
+          handleSearchButtonClick={handleSearchButtonClick}
+        />} />
+
         {/* <Route path="/dashboard" element={<DashboardTest />} /> */}
       </Routes>
     </Router>
