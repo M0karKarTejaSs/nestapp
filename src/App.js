@@ -4,7 +4,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Dashboard from "./pages/Dashboard";
 import DashboardTest from "./pages/DashboardTest";
-
+import Genre from "./pages/Genre";
 import "./App.css";
 import { useDashboard } from "../src/pages/useDashboard"
 
@@ -81,7 +81,7 @@ function App() {
     handleSearchButtonClick,
   } = useDashboard();
 
-
+  // instead make after login api should be authenticated so automatically my work will file logout
   return (
     <Router>
       <ToastContainer />
@@ -162,7 +162,7 @@ function App() {
             )
           }
         />
-        {/* <Route
+        <Route
           path="/dashboard"
           element={
             <Dashboard
@@ -174,8 +174,9 @@ function App() {
               handleSearchButtonClick={handleSearchButtonClick}
             />
           }
-        /> */}
-        <Route path="/dashboard" element={<DashboardTest />} />
+        />
+        <Route path="/genre" element={<Genre />} />
+        {/* <Route path="/dashboard" element={<DashboardTest />} /> */}
       </Routes>
     </Router>
   );

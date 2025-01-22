@@ -309,103 +309,103 @@
 
 
 
-import React, { useState, useEffect, useRef } from "react";
-import "../App.css";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import Book from "../components/Book";
-import Genre from "../components/Genre"
-import MainContent from "../components/MainContent";
-const DashboardTest = () => {
-    const [isIdle, setIsIdle] = useState(false);
-    const [currentPage, setCurrentPage] = useState("Home");
+// // import React, { useState, useEffect, useRef } from "react";
+// // import "../App.css";
+// // import Navbar from "../components/Navbar";
+// // import Footer from "../components/Footer";
+// // import Book from "../components/Book";
+// // import Genre from "../components/Genre"
+// // import MainContent from "../components/MainContent";
+// // const DashboardTest = () => {
+// //     const [isIdle, setIsIdle] = useState(false);
+// //     const [currentPage, setCurrentPage] = useState("Home");
 
-    const TIMEOUT_PERIOD = 1000 * 120 ;
-    const idleTimer = useRef(null);
+// //     const TIMEOUT_PERIOD = 1000 * 120 ;
+// //     const idleTimer = useRef(null);
 
-    const logoutUser = () => {
-        localStorage.removeItem("authToken");
-        window.location.replace("/");
-        localStorage.clear("AuthToken");
-        alert("Session expired. You have been logged out due to inactivity.");
-    };
+// //     const logoutUser = () => {
+// //         localStorage.removeItem("authToken");
+// //         window.location.replace("/");
+// //         localStorage.clear("AuthToken");
+// //         alert("Session expired. You have been logged out due to inactivity.");
+// //     };
 
-    const resetIdleTimer = () => {
-        if (idleTimer.current) {
-            clearTimeout(idleTimer.current);
-        }
-        idleTimer.current = setTimeout(() => {
-            setIsIdle(true);
-            logoutUser();
-        }, TIMEOUT_PERIOD);
-    };
+// //     const resetIdleTimer = () => {
+// //         if (idleTimer.current) {
+// //             clearTimeout(idleTimer.current);
+// //         }
+// //         idleTimer.current = setTimeout(() => {
+// //             setIsIdle(true);
+// //             logoutUser();
+// //         }, TIMEOUT_PERIOD);
+// //     };
 
-    useEffect(() => {
-        window.addEventListener("mousemove", resetIdleTimer);
-        window.addEventListener("keydown", resetIdleTimer);
-        window.addEventListener("click", resetIdleTimer);
+// //     useEffect(() => {
+// //         window.addEventListener("mousemove", resetIdleTimer);
+// //         window.addEventListener("keydown", resetIdleTimer);
+// //         window.addEventListener("click", resetIdleTimer);
 
-        return () => {
-            window.removeEventListener("mousemove", resetIdleTimer);
-            window.removeEventListener("keydown", resetIdleTimer);
-            window.removeEventListener("click", resetIdleTimer);
-            if (idleTimer.current) {
-                clearTimeout(idleTimer.current);
-            }
-        };
-    }, []);
+// //         return () => {
+// //             window.removeEventListener("mousemove", resetIdleTimer);
+// //             window.removeEventListener("keydown", resetIdleTimer);
+// //             window.removeEventListener("click", resetIdleTimer);
+// //             if (idleTimer.current) {
+// //                 clearTimeout(idleTimer.current);
+// //             }
+// //         };
+// //     }, []);
 
-    // Page Component Mapping
-    const pageComponents = {
-        Home: <MainContent />,
-        Book: <Book />,
-        Genre: <Genre />,
-        Profile: <div>View your Profile here!</div>,
-    };
+// //     // Page Component Mapping
+// //     const pageComponents = {
+// //         Home: <MainContent />,
+// //         Book: <Book />,
+// //         Genre: <Genre />,
+// //         Profile: <div>View your Profile here!</div>,
+// //     };
 
-    const renderContent = () => {
-        if (currentPage === "Logout") {
-            logoutUser();
-            return null;
-        }
-        return pageComponents[currentPage] || <div>Page Not Found</div>;
-    };
+// //     const renderContent = () => {
+// //         if (currentPage === "Logout") {
+// //             logoutUser();
+// //             return null;
+// //         }
+// //         return pageComponents[currentPage] || <div>Page Not Found</div>;
+// //     };
 
-    // Menu Items (These can eventually be fetched from a database)
-    const menuItems = [
-        { id: 1, key: "Home", label: "Home" },
-        { id: 2, key: "Book", label: "Book" },
-        { id: 3, key: "Genre", label: "Genre" },
-        { id: 4, key: "Profile", label: "Profile" },
-        { id: 5, key: "Logout", label: "Logout" },
-    ];
+// //     // Menu Items (These can eventually be fetched from a database)
+// //     const menuItems = [
+// //         { id: 1, key: "Home", label: "Home" },
+// //         { id: 2, key: "Book", label: "Book" },
+// //         { id: 3, key: "Genre", label: "Genre" },
+// //         { id: 4, key: "Profile", label: "Profile" },
+// //         { id: 5, key: "Logout", label: "Logout" },
+// //     ];
 
-    return (
-        <div className="container-scroller">
-            <div className="sidebar">
-                <h2 className="sidebar-title">Book Dashboard</h2>
-                <ul className="sidebar-menu">
-                    {menuItems.map((item) => (
-                        <li
-                            key={item.id}
-                            className="menu-item"
-                            onClick={() => setCurrentPage(item.key)}
-                        >
-                            <a href={`#${item.key.toLowerCase()}`}>{item.label}</a>
-                        </li>
-                    ))}
-                </ul>
-            </div>
+// //     return (
+// //         <div className="container-scroller">
+// //             <div className="sidebar">
+// //                 <h2 className="sidebar-title">Book Dashboard</h2>
+// //                 <ul className="sidebar-menu">
+// //                     {menuItems.map((item) => (
+// //                         <li
+// //                             key={item.id}
+// //                             className="menu-item"
+// //                             onClick={() => setCurrentPage(item.key)}
+// //                         >
+// //                             <a href={`#${item.key.toLowerCase()}`}>{item.label}</a>
+// //                         </li>
+// //                     ))}
+// //                 </ul>
+// //             </div>
 
-            <div className="container-fluid page-body-wrapper">
-                <Navbar />
+// //             <div className="container-fluid page-body-wrapper">
+// //                 <Navbar />
 
-                <div className="main-panel">{renderContent()}</div>
+// //                 <div className="main-panel">{renderContent()}</div>
 
-                <Footer />
-            </div>
-        </div>
-    );
-};
+// //                 <Footer />
+// //             </div>
+// //         </div>
+// //     );
+// // };
 
-export default DashboardTest;
+// // export default DashboardTest;

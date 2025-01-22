@@ -1,5 +1,8 @@
 import React from 'react';
 import '../styles/Dash.css';
+import { Link } from 'react-router-dom';
+import handleLogout from "../components/Logout"
+import useUserProfile from '../components/DashboardAuth';
 
 const Dashboard = ({
   toggleSidebar,
@@ -9,6 +12,8 @@ const Dashboard = ({
   isSearchFormShown,
   handleSearchButtonClick,
 }) => {
+  const { userProfile, errorMessage } = useUserProfile(); // Using the custom hook to get user data
+
   return (
     <section id="dashboard">
       {/* SIDEBAR */}
@@ -19,48 +24,52 @@ const Dashboard = ({
         </a>
         <ul className="side-menu top">
           <li className="active">
-            <a href="#">
+            <Link to="#">
               <i className="bx bxs-dashboard"></i>
               <span className="text">Dashboard</span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="#">
+            <Link to="/genre">
               <i className="bx bxs-shopping-bag-alt"></i>
-              <span className="text">My Store</span>
-            </a>
+              <span className="text">Genre</span>
+            </Link>
           </li>
           <li>
-            <a href="#">
+            <Link to="#">
               <i className="bx bxs-doughnut-chart"></i>
               <span className="text">Analytics</span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="#">
+            <Link to="#">
               <i className="bx bxs-message-dots"></i>
               <span className="text">Message</span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="#">
+            <Link to="#">
               <i className="bx bxs-group"></i>
               <span className="text">Team</span>
-            </a>
+            </Link>
           </li>
         </ul>
         <ul className="side-menu">
           <li>
-            <a href="#">
+            <Link to="#">
               <i className="bx bxs-cog"></i>
               <span className="text">Settings</span>
-            </a>
+            </Link>
           </li>
-          <li>
-            <a href="#" className="logout">
+          {/* <li>
+            <Link to="#" className="logout">
               <i className="bx bxs-log-out-circle"></i>
-              {/* <span className="text">Logout</span> */}
-            </a>
+            </Link>
+          </li> */}
+          <li>
+            <Link to="#" className="logout" onClick={handleLogout}>
+              <i className="bx bxs-log-out-circle"></i>
+            </Link>
           </li>
         </ul>
       </section>
@@ -72,7 +81,7 @@ const Dashboard = ({
         <nav>
           <i className="bx bx-menu" onClick={toggleSidebar}></i>
           <a href="#" className="nav-link">
-            Categories
+            Dashboard
           </a>
           <form action="#" className={isSearchFormShown ? 'show' : ''}>
             <div className="form-input">
@@ -102,15 +111,15 @@ const Dashboard = ({
               <h1>Dashboard</h1>
               <ul className="breadcrumb">
                 <li>
-                  <a href="#">Dashboard</a>
+                  <Link to="/dashboard">Dashboard</Link>
                 </li>
                 <li>
                   <i className="bx bx-chevron-right"></i>
                 </li>
                 <li>
-                  <a className="active" href="#">
+                  <Link to="#" className="active">
                     Home
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -118,6 +127,14 @@ const Dashboard = ({
               <i className="bx bxs-cloud-download"></i>
               <span className="text">Download PDF</span>
             </a>
+          </div>
+          {/* DISPLAY PROFILE MESSAGE */}
+          <div className="profile-message">
+            {userProfile ? (
+              <h3>{userProfile.message}</h3>
+            ) : (
+              <p>{errorMessage || 'Loading profile...'}</p>
+            )}
           </div>
 
           {/* STATISTICS */}
@@ -232,5 +249,3 @@ const Dashboard = ({
 };
 
 export default Dashboard;
-
-
