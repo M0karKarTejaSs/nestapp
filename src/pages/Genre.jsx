@@ -6,13 +6,14 @@ import { retToken } from '../AuthToken';
 import { jwtDecode } from 'jwt-decode';
 import Sidebar from '../components/Sidebar';
 import DataTable from '../components/DataTable';
+import Navbar from '../components/Navbar';
+import GenreForm from '../components/GenreForm'; // Import GenreForm
 
 const Genre = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormShown, handleSearchButtonClick }) => {
   const [genres, setGenres] = useState([]);
   const [isAddGenre, setIsAddGenre] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentGenre, setCurrentGenre] = useState({ genreId: '', genreName: '', description: '' });
-  const [newGenre, setNewGenre] = useState({ genreName: '', description: '' });
   const [userId, setUserId] = useState(null);
 
   const columns = [
@@ -72,8 +73,8 @@ const Genre = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormSho
     }
   };
 
-  const handleSubmit = async () => {
-    const genre = isEditMode ? currentGenre : { ...newGenre, userId };
+  const handleSubmit = async (genreData) => {
+    const genre = isEditMode ? { ...currentGenre, ...genreData } : { ...genreData, userId };
     if (!genre.genreName || !genre.description) return toast.error('Please fill all fields.');
 
     try {
@@ -97,38 +98,22 @@ const Genre = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormSho
     }
   };
 
-  const handleGenreChange = (e, field) => {
-    const value = e.target.value;
-    const genreState = isEditMode ? currentGenre : newGenre;
-    isEditMode ? setCurrentGenre({ ...genreState, [field]: value }) : setNewGenre({ ...genreState, [field]: value });
-  };
-
-
   const resetForm = () => {
     setIsAddGenre(false);
     setIsEditMode(false);
     setCurrentGenre({ genreId: '', genreName: '', description: '' });
-    setNewGenre({ genreName: '', description: '' });
   };
 
   return (
     <section id="dashboard">
       <Sidebar isSidebarHidden={isSidebarHidden} />
       <section id="content">
-        <nav>
-          <i className="bx bx-menu" onClick={toggleSidebar}></i>
-          <a href="#" className="nav-link">Genres</a>
-          <form className={isSearchFormShown ? 'show' : ''}>
-            <div className="form-input">
-              <input type="search" placeholder="Search..." />
-              <button type="button" onClick={handleSearchButtonClick}>
-                <i className={`bx ${isSearchFormShown ? 'bx-x' : 'bx-search'}`}></i>
-              </button>
-            </div>
-          </form>
-          <label htmlFor="switch-mode" className="switch-mode" onClick={toggleDarkMode}></label>
-        </nav>
-
+        <Navbar
+          toggleSidebar={toggleSidebar}
+          isSearchFormShown={isSearchFormShown}
+          handleSearchButtonClick={handleSearchButtonClick}
+          toggleDarkMode={toggleDarkMode}
+        />
         <main>
           <div className="head-title">
             <div className="left">
@@ -149,31 +134,14 @@ const Genre = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormSho
               data={genres}
               onEdit={handleEdit}
               onDelete={handleDelete}
-              handleGenreChange={handleGenreChange} // Pass it as a prop
             />
-
           ) : (
-            <div className="overlay">
-              <div className="add-genre-form">
-                <input
-                  type="text"
-                  placeholder="Genre Name"
-                  value={isEditMode ? currentGenre.genreName : newGenre.genreName}
-                  onChange={(e) => handleGenreChange(e, 'genreName')}
-                />
-                <textarea
-                  placeholder="Description"
-                  value={isEditMode ? currentGenre.description : newGenre.description}
-                  onChange={(e) => handleGenreChange(e, 'description')}
-                />
-                <div className="button-container">
-                  <button onClick={handleSubmit} className="btn btn-success">
-                    {isEditMode ? 'Save Changes' : 'Add'}
-                  </button>
-                  <button onClick={resetForm} className="btn btn-secondary">Cancel</button>
-                </div>
-              </div>
-            </div>
+            <GenreForm
+              isEditMode={isEditMode}
+              currentGenre={currentGenre}
+              onSubmit={handleSubmit}
+              onCancel={resetForm}
+            />
           )}
           <ToastContainer />
         </main>

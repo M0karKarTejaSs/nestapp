@@ -1,28 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import '../styles/Dash.css';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { retToken } from '../AuthToken';
 import { jwtDecode } from 'jwt-decode';
-import Sidebar from '../components/Sidebar'; // Import Sidebar
-import DataTable from '../components/DataTable'; // Import DataTable
+import Sidebar from '../components/Sidebar';
+import DataTable from '../components/DataTable';
+import Navbar from '../components/Navbar';
+import GenericForm from '../components/GenericForm';
 
-const Book = ({
-    toggleSidebar,
-    isSidebarHidden,
-}) => {
+const Book = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormShown, handleSearchButtonClick }) => {
     const [books, setBooks] = useState([]);
     const [isAddBook, setIsAddBook] = useState(false);
-    const [isEditMode, setIsEditMode] = useState(false);
-    const [currentBook, setCurrentBook] = useState({ bookId: '', title: '', price: '', rating: '', quantity: '' });
+    const [currentBook, setCurrentBook] = useState(null);
     const [userId, setUserId] = useState(null);
 
+    const columnHeaders = [
+        'ID', 'Title', 'ISBN', 'Author', 'Publisher', 'Publication Date',
+        'Genre', 'Price', 'Quantity', 'Language', 'Description', 'Created At', 'Updated At',
+    ];
+    
+    const customAccessorMapping = {
+        'ID': 'bookId',
+        'Publication Date': 'publication_date',
+        'Created At': 'created_at',
+        'Updated At': 'updated_at',
+    };
+
+    const columns = columnHeaders.map((header) => ({
+        header,
+        accessor: customAccessorMapping[header] || header.replace(/ /g, '_').toLowerCase(),
+    }));
+    
     useEffect(() => {
         const token = retToken();
         if (token) {
-            const decodedToken = jwtDecode(token);
-            setUserId(decodedToken.userId);
-            fetchBooks(decodedToken.userId);
+            const decoded = jwtDecode(token);
+            setUserId(decoded?.userId || null);
+            fetchBooks(decoded?.userId);
         }
     }, []);
 
@@ -30,148 +45,134 @@ const Book = ({
         try {
             const response = await fetch('http://localhost:8080/api/book', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', Authorization: retToken() },
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: retToken(),
+                },
                 body: JSON.stringify({ action: 'READ_ALL', userId }),
             });
-            if (!response.ok) throw new Error('Error fetching books.');
+            if (!response.ok) throw new Error('Failed to fetch books');
             setBooks(await response.json());
-        } catch (error) {
-            toast.error(error.message);
+        } catch {
+            toast.error('Error fetching books');
         }
     };
 
-    const handleInputChange = (e, field) => setCurrentBook(prev => ({ ...prev, [field]: e.target.value }));
-
-    const handleSubmit = async () => {
-        const { bookId, title, price, rating, quantity } = currentBook;
-        if (!title || !price || !rating || quantity === undefined) return toast.error('All fields are required.');
-
+    const handleSave = async (bookData) => {
+        const isEditMode = !!currentBook;
+        const book = { ...currentBook, ...bookData, userId };
         const action = isEditMode ? 'UPDATE' : 'CREATE';
+
         try {
             const response = await fetch('http://localhost:8080/api/book', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', Authorization: retToken() },
-                body: JSON.stringify({
-                    action,
-                    title,
-                    price,
-                    rating: parseFloat(rating),
-                    quantity, // Include the quantity field
-                    userId,
-                    authorId: 6,  // Hardcoded authorId
-                    genreId: 1,   // Hardcoded genreId
-                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: retToken(),
+                },
+                body: JSON.stringify({ action, ...book }),
             });
+            if (!response.ok) throw new Error('Failed to save book');
+            const data = await response.json();
 
-            if (!response.ok) throw new Error(isEditMode ? 'Failed to update book.' : 'Failed to add book.');
-            const updatedBook = await response.json();
-            setBooks(prev => isEditMode
-                ? prev.map(book => (book.bookId === bookId ? updatedBook : book))
-                : [...prev, updatedBook]);
-
-            toast.success(isEditMode ? 'Book updated successfully!' : 'Book added successfully!');
+            setBooks((prev) =>
+                isEditMode ? prev.map((b) => (b.bookId === data.bookId ? data : b)) : [...prev, data]
+            );
             resetForm();
-        } catch (error) {
-            toast.error(error.message);
+            toast.success(`Book ${isEditMode ? 'updated' : 'added'} successfully!`);
+        } catch {
+            toast.error(`Failed to ${isEditMode ? 'update' : 'add'} book`);
         }
     };
 
-    const deleteBook = async (bookId) => {
+    const handleDelete = async (bookId) => {
         try {
             const response = await fetch('http://localhost:8080/api/book', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', Authorization: retToken() },
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: retToken(),
+                },
                 body: JSON.stringify({ action: 'DELETE', bookId, userId }),
             });
-
-            if (!response.ok) throw new Error('Failed to delete book.');
-            setBooks(prev => prev.filter(book => book.bookId !== bookId));
+            if (!response.ok) throw new Error('Failed to delete book');
+            setBooks((prev) => prev.filter((b) => b.bookId !== bookId));
             toast.success('Book deleted successfully!');
-        } catch (error) {
-            toast.error(error.message);
+        } catch {
+            toast.error('Failed to delete book');
         }
     };
 
     const resetForm = () => {
         setIsAddBook(false);
-        setIsEditMode(false);
-        setCurrentBook({ bookId: '', title: '', price: '', rating: '', quantity: '' });
+        setCurrentBook(null);
     };
-
-    const columns = [
-        { header: 'Title', accessor: 'title' },
-        { header: 'Price', accessor: 'price' },
-        { header: 'Rating', accessor: 'rating' },
-        { header: 'Quantity', accessor: 'quantity' },
-    ];
 
     return (
         <section id="dashboard">
-            {/* Dynamic Sidebar */}
             <Sidebar isSidebarHidden={isSidebarHidden} />
-
             <section id="content">
-                <nav>
-                    <i className="bx bx-menu" onClick={toggleSidebar}></i>
-                    <a href="#" className="nav-link">Books</a>
-                </nav>
-
+                <Navbar
+                    toggleSidebar={toggleSidebar}
+                    isSearchFormShown={isSearchFormShown}
+                    handleSearchButtonClick={handleSearchButtonClick}
+                    toggleDarkMode={toggleDarkMode}
+                />
                 <main>
                     <div className="head-title">
-                        <h1>Books</h1>
+                        <div className="left">
+                            <h1>Books</h1>
+                            <ul className="breadcrumb">
+                                <li><a href="#">Books</a></li>
+                                <li><i className="bx bx-chevron-right"></i></li>
+                                <li><a className="active" href="#">Home</a></li>
+                            </ul>
+                        </div>
                         <button onClick={() => setIsAddBook(true)} className="btn btn-success">Add Book</button>
                     </div>
 
-                    {isAddBook ? (
-                        <div className="overlay">
-                            <div className="add-genre-form">
-                                <input
-                                    type="text"
-                                    placeholder="Title"
-                                    value={currentBook.title}
-                                    onChange={(e) => handleInputChange(e, 'title')}
-                                />
-                                <input
-                                    type="number"
-                                    placeholder="Price"
-                                    value={currentBook.price}
-                                    onChange={(e) => handleInputChange(e, 'price')}
-                                />
-                                <input
-                                    type="number"
-                                    placeholder="Rating"
-                                    value={currentBook.rating}
-                                    onChange={(e) => handleInputChange(e, 'rating')}
-                                />
-                                <input
-                                    type="number"
-                                    placeholder="Quantity"
-                                    value={currentBook.quantity}
-                                    onChange={(e) => handleInputChange(e, 'quantity')}
-                                />
-                                <div className="button-container">
-                                    <button onClick={handleSubmit} className="btn btn-success">
-                                        <i className="bi bi-check-circle"></i> {isEditMode ? 'Save Changes' : 'Add'}
-                                    </button>
-                                    <button onClick={resetForm} className="btn btn-secondary">
-                                        <i className="bi bi-x-circle"></i> Cancel
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    ) : (
+                    {!isAddBook ? (
                         <DataTable
                             title="Books List"
                             columns={columns}
-                            data={books}
-                            onEdit={(book) => { setIsEditMode(true); setIsAddBook(true); setCurrentBook(book); }}
-                            onDelete={deleteBook}
+                            data={books.map(book => ({
+                                bookId: book.bookId,
+                                title: book.title,
+                                isbn: book.isbn,
+                                author: book.authorName,
+                                publisher: book.publisher,
+                                publication_date: book.publicationDate,
+                                genre: book.genre,
+                                price: book.price,
+                                quantity: book.quantity,
+                                language: book.language,
+                                description: book.description,
+                                created_at: book.createdAt,
+                                updated_at: book.updatedAt,
+                            }))}
+                            onEdit={(book) => {
+                                setCurrentBook(book);
+                                setIsAddBook(true);
+                            }}
+                            onDelete={(book) => handleDelete(book.bookId)}
+                        />
+                    ) : (
+                        <GenericForm
+                            isEditMode={!!currentBook}
+                            currentData={currentBook}
+                            fields={columnHeaders.map((header) => ({
+                                name: customAccessorMapping[header] || header.replace(/ /g, '_').toLowerCase(),
+                                label: header,
+                                placeholder: `Enter ${header}`,
+                            }))}
+                            onSubmit={handleSave}
+                            onCancel={resetForm}
+                            formTitle={currentBook ? 'Edit Book' : 'Add Book'}
                         />
                     )}
+                    <ToastContainer />
                 </main>
             </section>
-
-            <ToastContainer />
         </section>
     );
 };

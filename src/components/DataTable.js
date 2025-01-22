@@ -9,8 +9,8 @@ const DataTable = ({ title, columns, data, onEdit, onDelete }) => (
       <table>
         <thead>
           <tr>
-            {columns.map(({ header }, index) => (
-              <th key={index}>{header}</th>
+            {columns.map(({ header, accessor }, index) => (
+              <th key={accessor || index}>{header}</th>
             ))}
             <th>Action</th>
           </tr>
@@ -18,12 +18,31 @@ const DataTable = ({ title, columns, data, onEdit, onDelete }) => (
         <tbody>
           {data.map((row, rowIndex) => (
             <tr key={rowIndex}>
-              {columns.map(({ accessor }, colIndex) => (
-                <td key={colIndex}>{row[accessor]}</td>
-              ))}
+              {columns.map(({ accessor }, colIndex) => {
+                // Handle cases where the value might be an object
+                const value = row[accessor];
+                let displayValue = value;
+
+                // If the value is an object, render a specific property (e.g., 'genreName')
+                if (typeof value === 'object' && value !== null) {
+                  displayValue = value.genreName || value; // Adjust this to match the properties of the object
+                }
+
+                return (
+                  <td key={colIndex}>
+                    {displayValue !== undefined ? displayValue : '-'}
+                  </td>
+                );
+              })}
               <td>
-                <i onClick={() => onEdit(row)} className="bi bi-pencil-square edit-icon"></i>
-                <i onClick={() => onDelete(row)} className="bi bi-trash delete-icon"></i>
+                <i
+                  onClick={() => onEdit(row)}
+                  className="bi bi-pencil-square edit-icon"
+                ></i>
+                <i
+                  onClick={() => onDelete(row.bookId)} // Pass bookId for deletion
+                  className="bi bi-trash delete-icon"
+                ></i>
               </td>
             </tr>
           ))}
