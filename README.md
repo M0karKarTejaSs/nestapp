@@ -92,3 +92,7 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 duplicacy check in insert category
 
 while update dont check self duplicacy
+
+dynamic table
+tried dynamic crud fetch
+dynamic post options

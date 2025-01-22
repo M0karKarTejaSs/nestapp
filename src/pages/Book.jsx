@@ -13,7 +13,7 @@ const Book = ({
     const [books, setBooks] = useState([]);
     const [isAddBook, setIsAddBook] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
-    const [currentBook, setCurrentBook] = useState({ bookId: '', title: '', price: '', rating: '' });
+    const [currentBook, setCurrentBook] = useState({ bookId: '', title: '', price: '', rating: '', quantity: '' });
     const [userId, setUserId] = useState(null);
 
     useEffect(() => {
@@ -41,32 +41,6 @@ const Book = ({
 
     const handleInputChange = (e, field) => setCurrentBook(prev => ({ ...prev, [field]: e.target.value }));
 
-    // const handleSubmit = async () => {
-    //     const { bookId, title, price, rating } = currentBook;
-    //     if (!title || !price || !rating) return toast.error('All fields are required.');
-
-    //     const action = isEditMode ? 'UPDATE' : 'CREATE';
-    //     try {
-    //         const response = await fetch('http://localhost:8080/api/book', {
-    //             method: 'POST',
-    //             headers: { 'Content-Type': 'application/json', Authorization: retToken() },
-    //             //MAKE DYNAMIC
-    //             body: JSON.stringify({ action, title, price, rating: parseFloat(rating), userId, authorId: 6, genreId: 1 }),
-    //         });
-
-    //         if (!response.ok) throw new Error(isEditMode ? 'Failed to update book.' : 'Failed to add book.');
-    //         const updatedBook = await response.json();
-    //         setBooks(prev => isEditMode
-    //             ? prev.map(book => (book.bookId === bookId ? updatedBook : book))
-    //             : [...prev, updatedBook]);
-
-    //         toast.success(isEditMode ? 'Book updated successfully!' : 'Book added successfully!');
-    //         resetForm();
-    //     } catch (error) {
-    //         toast.error(error.message);
-    //     }
-    // };
-
     const handleSubmit = async () => {
         const { bookId, title, price, rating, quantity } = currentBook;
         if (!title || !price || !rating || quantity === undefined) return toast.error('All fields are required.');
@@ -76,14 +50,12 @@ const Book = ({
             const response = await fetch('http://localhost:8080/api/book', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Authorization: retToken() },
-                // Make the quantity dynamic, even though it's hardcoded for now
                 body: JSON.stringify({
                     action,
-                    bookId,  // Include bookId for update if in edit mode
                     title,
                     price,
                     rating: parseFloat(rating),
-                    quantity,  // Include the quantity field
+                    quantity, // Include the quantity field
                     userId,
                     authorId: 6,  // Hardcoded authorId
                     genreId: 1,   // Hardcoded genreId
@@ -102,7 +74,6 @@ const Book = ({
             toast.error(error.message);
         }
     };
-
 
     const deleteBook = async (bookId) => {
         try {
@@ -123,7 +94,7 @@ const Book = ({
     const resetForm = () => {
         setIsAddBook(false);
         setIsEditMode(false);
-        setCurrentBook({ bookId: '', title: '', price: '', rating: '' });
+        setCurrentBook({ bookId: '', title: '', price: '', rating: '', quantity: '' });
     };
 
     return (
@@ -171,6 +142,12 @@ const Book = ({
                                     value={currentBook.rating}
                                     onChange={(e) => handleInputChange(e, 'rating')}
                                 />
+                                <input
+                                    type="number"
+                                    placeholder="Quantity"
+                                    value={currentBook.quantity}
+                                    onChange={(e) => handleInputChange(e, 'quantity')}
+                                />
                                 <div className="button-container">
                                     <button onClick={handleSubmit} className="btn btn-success">
                                         <i className="bi bi-check-circle"></i> {isEditMode ? 'Save Changes' : 'Add'}
@@ -193,6 +170,7 @@ const Book = ({
                                             <th>Title</th>
                                             <th>Price</th>
                                             <th>Rating</th>
+                                            <th>Quantity</th> {/* Add quantity column */}
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -202,6 +180,7 @@ const Book = ({
                                                 <td>{book.title}</td>
                                                 <td>{book.price}</td>
                                                 <td>{book.rating}</td>
+                                                <td>{book.quantity}</td> {/* Display quantity */}
                                                 <td>
                                                     <i onClick={() => { setIsEditMode(true); setIsAddBook(true); setCurrentBook(book); }} className="bi bi-pencil-square edit-icon"></i>
                                                     <i onClick={() => deleteBook(book.bookId)} className="bi bi-trash delete-icon"></i>

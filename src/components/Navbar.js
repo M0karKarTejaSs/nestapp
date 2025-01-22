@@ -1,25 +1,23 @@
-import React from "react";
-// import { FaSearch, FaBell, FaUserCircle } from "react-icons/fa"; // Icons for functionality
-import "../App.css";
+// Navbar.js
+import React from 'react';
 
-const Navbar = () => {
-  return (
-    <nav className="navbar">
-      <div className="navbar-left">
-        <h1 className="navbar-title">Dashboard</h1>
+const Navbar = ({ toggleSidebar, isSearchFormShown, handleSearchButtonClick, toggleDarkMode }) => (
+  <nav>
+    <i className="bx bx-menu" onClick={toggleSidebar}></i>
+    <a href="#" className="nav-link">Dashboard</a>
+    <form action="#" className={isSearchFormShown ? 'show' : ''}>
+      <div className="form-input">
+        <input type="search" placeholder="Search..." />
+        <button type="submit" className="search-btn" onClick={handleSearchButtonClick}>
+          <i className={`bx ${isSearchFormShown ? 'bx-x' : 'bx-search'}`}></i>
+        </button>
       </div>
-      <div className="navbar-right">
-        <div className="search-bar">
-          {/* <FaSearch className="search-icon" /> */}
-          <input type="text" placeholder="Search..." />
-        </div>
-        <div className="icons">
-          {/* <FaBell className="icon" title="Notifications" />
-          <FaUserCircle className="icon" title="Profile" /> */}
-        </div>
-      </div>
-    </nav>
-  );
-};
+    </form>
+    <input type="checkbox" id="switch-mode" hidden />
+    <label htmlFor="switch-mode" className="switch-mode" onClick={toggleDarkMode}></label>
+    <a href="#" className="notification"><i className="bx bxs-bell"></i><span className="num">8</span></a>
+    <a href="#" className="profile"><img src="img/people.png" alt="profile" /></a>
+  </nav>
+);
 
 export default Navbar;
