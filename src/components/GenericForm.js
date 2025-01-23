@@ -1,4 +1,3 @@
-// src/components/GenericForm.js
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 
@@ -11,8 +10,6 @@ const GenericForm = ({
   formTitle 
 }) => {
   const [formData, setFormData] = useState({});
-
-    
 
   // Initialize form data when the component loads or when data changes
   useEffect(() => {
@@ -42,24 +39,35 @@ const GenericForm = ({
 
   return (
     <div className="overlay">
-      <div className="add-genre-form">
+      <div className="add-genre-form" style={{ width: '500px', padding: '10px' }}>
         <h2>{formTitle}</h2>
-        {fields.map(field => (
-          <div key={field.name}>
-            <label>{field.label}</label>
-            <input
-              type="text"
-              placeholder={field.placeholder}
-              value={formData[field.name] || ''}
-              onChange={(e) => handleChange(e, field.name)}
-            />
-          </div>
-        ))}
-        <div className="button-container">
-          <button onClick={handleSubmit} className="btn btn-success">
+        <div className="form-row" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+          {fields.map(field => (
+            <div key={field.name} style={{ flex: '1 1 45%', marginBottom: '10px' }}>
+              <label style={{ display: 'block', marginBottom: '4px', fontSize: '12px' }}>{field.label}</label>
+              <input
+                type="text"
+                placeholder={field.placeholder}
+                value={formData[field.name] || ''}
+                onChange={(e) => handleChange(e, field.name)}
+                style={{
+                  width: '100%',
+                  padding: '6px',
+                  fontSize: '12px',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px'
+                }}
+              />
+            </div>
+          ))}
+        </div>
+        <div className="button-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <button onClick={handleSubmit} className="btn btn-success" style={{ padding: '6px 10px', fontSize: '12px' }}>
             {isEditMode ? 'Save Changes' : 'Add'}
           </button>
-          <button onClick={onCancel} className="btn btn-secondary">Cancel</button>
+          <button onClick={onCancel} className="btn btn-secondary" style={{ padding: '6px 10px', fontSize: '12px' }}>
+            Cancel
+          </button>
         </div>
       </div>
     </div>

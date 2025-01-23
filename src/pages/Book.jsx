@@ -16,21 +16,21 @@ const Book = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormShow
     const [userId, setUserId] = useState(null);
 
     const columnHeaders = [
-        'ID', 'Title', 'ISBN', 'Author', 'Publisher', 'Publication Date',
-        'Genre', 'Price', 'Quantity', 'Language', 'Description', 'Created At', 'Updated At',
+        'Title', 'ISBN', 'Author', 'Publisher', 'Publication Date',
+        'Genre', 'Price', 'Quantity', 'Description',
     ];
     
     const customAccessorMapping = {
-        'ID': 'bookId',
         'Publication Date': 'publication_date',
-        'Created At': 'created_at',
-        'Updated At': 'updated_at',
     };
 
-    const columns = columnHeaders.map((header) => ({
-        header,
-        accessor: customAccessorMapping[header] || header.replace(/ /g, '_').toLowerCase(),
-    }));
+    const columns = [
+        { header: 'Index', accessor: 'index' },
+        ...columnHeaders.map((header) => ({
+            header,
+            accessor: customAccessorMapping[header] || header.replace(/ /g, '_').toLowerCase(),
+        })),
+    ];
     
     useEffect(() => {
         const token = retToken();
@@ -135,8 +135,8 @@ const Book = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormShow
                         <DataTable
                             title="Books List"
                             columns={columns}
-                            data={books.map(book => ({
-                                bookId: book.bookId,
+                            data={books.map((book, index) => ({
+                                index: index + 1, // Add index to the data
                                 title: book.title,
                                 isbn: book.isbn,
                                 author: book.authorName,
@@ -145,10 +145,7 @@ const Book = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormShow
                                 genre: book.genre,
                                 price: book.price,
                                 quantity: book.quantity,
-                                language: book.language,
                                 description: book.description,
-                                created_at: book.createdAt,
-                                updated_at: book.updatedAt,
                             }))}
                             onEdit={(book) => {
                                 setCurrentBook(book);

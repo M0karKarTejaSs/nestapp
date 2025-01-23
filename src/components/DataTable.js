@@ -1,6 +1,6 @@
 import React from 'react';
 
-const DataTable = ({ title, columns, data, onEdit, onDelete }) => (
+const DataTable = ({ title, columns, data, onEdit, onDelete, userId }) => (
   <div className="table-data">
     <div className="order">
       <div className="head">
@@ -19,13 +19,11 @@ const DataTable = ({ title, columns, data, onEdit, onDelete }) => (
           {data.map((row, rowIndex) => (
             <tr key={rowIndex}>
               {columns.map(({ accessor }, colIndex) => {
-                // Handle cases where the value might be an object
                 const value = row[accessor];
                 let displayValue = value;
 
-                // If the value is an object, render a specific property (e.g., 'genreName')
                 if (typeof value === 'object' && value !== null) {
-                  displayValue = value.genreName || value; // Adjust this to match the properties of the object
+                  displayValue = value.genreName || value;
                 }
 
                 return (
@@ -36,11 +34,11 @@ const DataTable = ({ title, columns, data, onEdit, onDelete }) => (
               })}
               <td>
                 <i
-                  onClick={() => onEdit(row)}
+                  onClick={() => onEdit(row)} // Edit action
                   className="bi bi-pencil-square edit-icon"
                 ></i>
                 <i
-                  onClick={() => onDelete(row.bookId)} // Pass bookId for deletion
+                  onClick={() => onDelete(row.genreId, userId)} // Pass genreId and userId for deletion
                   className="bi bi-trash delete-icon"
                 ></i>
               </td>

@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { retToken } from '../AuthToken';
 import { jwtDecode } from 'jwt-decode';
 import Sidebar from '../components/Sidebar';
-import DataTable from '../components/DataTable';
+import DataTable from '../components/DataTable.js';
 import Navbar from '../components/Navbar';
 import GenreForm from '../components/GenreForm'; // Import GenreForm
 
@@ -55,7 +55,7 @@ const Genre = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormSho
     setCurrentGenre(genre);
   };
 
-  const handleDelete = async (genre) => {
+  const handleDelete = async (genreId, userId) => {
     try {
       const response = await fetch('http://localhost:8080/api/genre', {
         method: 'POST',
@@ -63,15 +63,17 @@ const Genre = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormSho
           'Content-Type': 'application/json',
           Authorization: retToken(),
         },
-        body: JSON.stringify({ action: 'DELETE', genreId: genre.genreId, userId }),
+        body: JSON.stringify({ action: 'DELETE', genreId, userId }), // Include genreId and userId in the payload
       });
+
       if (!response.ok) throw new Error('Failed to delete genre');
-      setGenres((prev) => prev.filter((g) => g.genreId !== genre.genreId));
+      setGenres((prev) => prev.filter((g) => g.genreId !== genreId)); // Update genre list
       toast.success('Genre deleted successfully!');
-    } catch {
-      toast.error('Failed to delete genre');
+    } catch (error) {
+      toast.error(`Error: ${error.message}`);
     }
   };
+
 
   const handleSubmit = async (genreData) => {
     const genre = isEditMode ? { ...currentGenre, ...genreData } : { ...genreData, userId };
@@ -133,8 +135,10 @@ const Genre = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormSho
               columns={columns}
               data={genres}
               onEdit={handleEdit}
-              onDelete={handleDelete}
+              onDelete={handleDelete} // Make sure to pass the correct onDelete function
+              userId={userId} // Pass userId to the DataTable
             />
+
           ) : (
             <GenreForm
               isEditMode={isEditMode}
