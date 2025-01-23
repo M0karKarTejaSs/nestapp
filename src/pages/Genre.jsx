@@ -123,7 +123,7 @@ const Genre = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormSho
               <ul className="breadcrumb">
                 <li><a href="#">Genre</a></li>
                 <li><i className="bx bx-chevron-right"></i></li>
-                <li><a className="active" href="#">Home</a></li>
+                
               </ul>
             </div>
             <button onClick={() => setIsAddGenre(true)} className="btn btn-success">Add Genre</button>

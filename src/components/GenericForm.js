@@ -45,19 +45,40 @@ const GenericForm = ({
           {fields.map(field => (
             <div key={field.name} style={{ flex: '1 1 45%', marginBottom: '10px' }}>
               <label style={{ display: 'block', marginBottom: '4px', fontSize: '12px' }}>{field.label}</label>
-              <input
-                type="text"
-                placeholder={field.placeholder}
-                value={formData[field.name] || ''}
-                onChange={(e) => handleChange(e, field.name)}
-                style={{
-                  width: '100%',
-                  padding: '6px',
-                  fontSize: '12px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px'
-                }}
-              />
+              {field.type === 'dropdown' ? (
+                <select
+                  value={formData[field.name] || ''}
+                  onChange={(e) => handleChange(e, field.name)}
+                  style={{
+                    width: '100%',
+                    padding: '6px',
+                    fontSize: '12px',
+                    border: '1px solid #ccc',
+                    borderRadius: '4px',
+                  }}
+                >
+                  <option value="">Select {field.label}</option>
+                  {field.options.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type={field.type || 'text'}
+                  placeholder={field.placeholder}
+                  value={formData[field.name] || ''}
+                  onChange={(e) => handleChange(e, field.name)}
+                  style={{
+                    width: '100%',
+                    padding: '6px',
+                    fontSize: '12px',
+                    border: '1px solid #ccc',
+                    borderRadius: '4px'
+                  }}
+                />
+              )}
             </div>
           ))}
         </div>
