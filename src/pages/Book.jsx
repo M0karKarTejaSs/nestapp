@@ -22,12 +22,9 @@ const Book = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormShow
         { header: 'Title', accessor: 'title' },
         { header: 'ISBN', accessor: 'isbn' },
         { header: 'Author', accessor: 'author' },
-        { header: 'Publisher', accessor: 'publisher' },
-        { header: 'Publication Date', accessor: 'publication_date' },
         { header: 'Genre', accessor: 'genre' },
         { header: 'Price', accessor: 'price' },
         { header: 'Quantity', accessor: 'quantity' },
-        { header: 'Description', accessor: 'description' },
     ];
 
     useEffect(() => {

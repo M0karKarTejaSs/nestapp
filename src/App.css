@@ -877,7 +877,7 @@ form.sign-in-form {
 
 .genre-table th, .genre-table td {
   padding: 12px 20px;
-  text-align: left;
+  text-align: center;
   border-bottom: 1px solid #ddd;
 }
 
