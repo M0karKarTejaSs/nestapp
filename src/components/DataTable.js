@@ -1,29 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/DataTable.css'; // Add styles for the table
+import '../styles/DataTable.css'; // Import styles
+import DataTablePagination from '../components/DataTablePagination.js';
+import { downloadCSV } from '../components/csvUtils'; // Import the utility function
 
 const DataTable = ({ title, columns, data, onEdit, onDelete, userId }) => {
-  const [searchText, setSearchText] = useState(''); // State for search/filter input
+  const [searchText, setSearchText] = useState('');
   const [filteredData, setFilteredData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 8;
 
-  // Sync filteredData with the original data on component mount or data prop change
   useEffect(() => {
     setFilteredData(data);
   }, [data]);
 
-  // Handle search/filter
   const handleSearch = (event) => {
     const value = event.target.value.toLowerCase();
     setSearchText(value);
-
     const filtered = data.filter((row) =>
       columns.some(({ accessor }) => {
         const cellValue = row[accessor];
         return cellValue?.toString().toLowerCase().includes(value);
       })
     );
-
     setFilteredData(filtered);
+    setCurrentPage(1);
   };
+
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentData = filteredData.slice(indexOfFirstRow, indexOfLastRow);
+
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
 
   return (
     <div className="table-data">
@@ -31,6 +38,14 @@ const DataTable = ({ title, columns, data, onEdit, onDelete, userId }) => {
         <div className="head">
           <h3>{title}</h3>
           <div className="filter-container">
+            <div className="download-button-container">
+              {/* <button
+                onClick={() => downloadCSV(title, columns, filteredData)}
+                className="download-csv-btn display-none"
+              >
+                Download CSV
+              </button> */}
+            </div>
             <input
               type="text"
               placeholder="Search or filter..."
@@ -53,8 +68,8 @@ const DataTable = ({ title, columns, data, onEdit, onDelete, userId }) => {
               </tr>
             </thead>
             <tbody>
-              {filteredData.length > 0 ? (
-                filteredData.map((row, rowIndex) => (
+              {currentData.length > 0 ? (
+                currentData.map((row, rowIndex) => (
                   <tr key={rowIndex}>
                     {columns.map(({ accessor }, colIndex) => (
                       <td key={colIndex}>
@@ -69,8 +84,6 @@ const DataTable = ({ title, columns, data, onEdit, onDelete, userId }) => {
                       <i
                         onClick={() => {
                           const identifier = row.bookId || row.genreId || row.authorId;
-                          console.log(identifier,"identifier");
-                          
                           if (identifier) {
                             onDelete(identifier, userId);
                           } else {
@@ -90,6 +103,14 @@ const DataTable = ({ title, columns, data, onEdit, onDelete, userId }) => {
             </tbody>
           </table>
         </div>
+        {filteredData.length > rowsPerPage && (
+          <DataTablePagination
+            totalPages={totalPages}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+          />
+        )}
+
       </div>
     </div>
   );
