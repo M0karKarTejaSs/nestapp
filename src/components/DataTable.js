@@ -67,7 +67,15 @@ const DataTable = ({ title, columns, data, onEdit, onDelete, userId }) => {
                         className="bi bi-pencil-square edit-icon"
                       ></i>
                       <i
-                        onClick={() => onDelete(row.genreId, userId)}
+                        onClick={() => {
+                          // Check if bookId or genreId exists and pass the relevant identifier
+                          const identifier = row.bookId || row.genreId;
+                          if (identifier) {
+                            onDelete(identifier, userId); // Pass both the identifier and userId
+                          } else {
+                            console.error('Error: Missing bookId or genreId');
+                          }
+                        }}
                         className="bi bi-trash delete-icon"
                       ></i>
                     </td>
