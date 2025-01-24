@@ -68,10 +68,11 @@ const DataTable = ({ title, columns, data, onEdit, onDelete, userId }) => {
                       ></i>
                       <i
                         onClick={() => {
-                          // Check if bookId or genreId exists and pass the relevant identifier
-                          const identifier = row.bookId || row.genreId;
+                          const identifier = row.bookId || row.genreId || row.authorId;
+                          console.log(identifier,"identifier");
+                          
                           if (identifier) {
-                            onDelete(identifier, userId); // Pass both the identifier and userId
+                            onDelete(identifier, userId);
                           } else {
                             console.error('Error: Missing bookId or genreId');
                           }

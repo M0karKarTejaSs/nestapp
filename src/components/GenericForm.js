@@ -55,6 +55,10 @@ const GenericForm = ({
       value = value.replace(/\D/g, ''); // Remove non-numeric characters
     }
 
+    if (field.type === 'text') {
+      value = value.replace(/[0-9]/g, ''); // Remove non-numeric characters
+    }
+
     // Restrict numbers in the title field
     if (['title', 'publisher'].includes(fieldName)) {
       value = value.replace(/[0-9]/g, ''); // Remove numeric characters

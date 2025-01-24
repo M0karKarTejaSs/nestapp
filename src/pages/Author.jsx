@@ -39,23 +39,20 @@ const Author = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormSh
                 headers: { 'Content-Type': 'application/json', Authorization: retToken() },
                 body: JSON.stringify({ action: 'READ_ALL', userId }),
             });
-
-            if (!response.ok) throw new Error('Failed to fetch authors');
-            const authorsData = await response.json();
-            setAuthors(authorsData);
+            if (response.ok) setAuthors(await response.json());
+            else throw new Error();
         } catch {
-            toast.error('Error fetching authors. Please try again later.');
+            toast.error('Error fetching authors. Please try again.');
         }
     };
 
-    const handleSave = async (authorData) => {
-        const { name, biography } = authorData;
+    const handleSave = async ({ name, biography }) => {
         const action = currentAuthor ? 'UPDATE' : 'CREATE';
         const payload = {
             action,
             authorName: name.trim(),
             biography: biography.trim(),
-            userId: parseInt(userId, 10),
+            userId,
             authorId: currentAuthor?.authorId,
         };
 
@@ -65,40 +62,34 @@ const Author = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormSh
                 headers: { 'Content-Type': 'application/json', Authorization: retToken() },
                 body: JSON.stringify(payload),
             });
-
-            if (!response.ok) throw new Error('Failed to save author');
-            const savedAuthor = await response.json();
-            setAuthors(prev => currentAuthor ? prev.map(a => (a.authorId === savedAuthor.authorId ? savedAuthor : a)) : [...prev, savedAuthor]);
+            if (!response.ok) throw new Error();
+            const updatedAuthor = await response.json();
+            setAuthors((prev) =>
+                action === 'UPDATE'
+                    ? prev.map((a) => (a.authorId === updatedAuthor.authorId ? updatedAuthor : a))
+                    : [...prev, updatedAuthor]
+            );
             resetForm();
             toast.success(`Author ${action === 'UPDATE' ? 'updated' : 'added'} successfully!`);
-            fetchAuthors(userId);
         } catch {
             toast.error('Failed to save author. Please try again.');
         }
     };
 
     const handleDelete = async (authorId) => {
-        if (!authorId) {
-            toast.error('Author ID is missing!');
-            return;
-        }
-
         try {
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Authorization: retToken() },
                 body: JSON.stringify({ action: 'DELETE', authorId, userId }),
             });
-
-            if (!response.ok) throw new Error('Failed to delete author');
-            setAuthors(prev => prev.filter(author => author.authorId !== authorId));
+            if (!response.ok) throw new Error();
+            setAuthors((prev) => prev.filter((author) => author.authorId !== authorId));
             toast.success('Author deleted successfully!');
-        } catch (error) {
-            console.error(error);
+        } catch {
             toast.error('Failed to delete author. Please try again.');
         }
     };
-
 
     const resetForm = () => {
         setIsAddAuthor(false);
@@ -134,24 +125,21 @@ const Author = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormSh
                             columns={columns}
                             data={authors.map((author, index) => ({
                                 index: index + 1,
-                                authorName: author.authorName,
-                                biography: author.biography,
-                                authorId: author.authorId,
+                                ...author,
                             }))}
                             onEdit={(author) => {
                                 setCurrentAuthor(author);
                                 setIsAddAuthor(true);
                             }}
-                            onDelete={(author) => handleDelete(author?.authorId)} // Ensure authorId is passed
+                            onDelete={(authorId) => handleDelete(authorId)}
                         />
-
                     ) : (
                         <GenericForm
                             isEditMode={!!currentAuthor}
                             currentData={currentAuthor}
                             fields={[
-                                { name: 'name', label: 'Name', placeholder: 'Enter Name', type: 'text', validation: { required: true, message: 'Name is required' } },
-                                { name: 'biography', label: 'Biography', placeholder: 'Enter Biography', type: 'text', validation: { required: true, message: 'Biography is required' } },
+                                { name: 'name', label: 'Name', placeholder: 'Enter Name', type: 'text', validation: { required: true } },
+                                { name: 'biography', label: 'Biography', placeholder: 'Enter Biography', type: 'text', validation: { required: true } },
                             ]}
                             onSubmit={handleSave}
                             onCancel={resetForm}
