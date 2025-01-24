@@ -2,12 +2,18 @@ import React, { useState, useEffect } from 'react';
 import '../styles/DataTable.css'; // Import styles
 import DataTablePagination from '../components/DataTablePagination.js';
 import { downloadCSV } from '../components/csvUtils'; // Import the utility function
+import SortButton from '../components/SortButton'; // Import the SortButton component
 
 const DataTable = ({ title, columns, data, onEdit, onDelete, userId }) => {
   const [searchText, setSearchText] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 8;
+
+  const [sortConfig, setSortConfig] = useState({
+    key: '', // Column to sort by
+    direction: 'asc', // Direction of sorting (asc or desc)
+  });
 
   useEffect(() => {
     setFilteredData(data);
@@ -24,6 +30,26 @@ const DataTable = ({ title, columns, data, onEdit, onDelete, userId }) => {
     );
     setFilteredData(filtered);
     setCurrentPage(1);
+  };
+
+  const handleSort = (columnKey) => {
+    let direction = 'asc';
+    if (sortConfig.key === columnKey && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key: columnKey, direction });
+
+    const sortedData = [...filteredData].sort((a, b) => {
+      if (a[columnKey] < b[columnKey]) {
+        return direction === 'asc' ? -1 : 1;
+      }
+      if (a[columnKey] > b[columnKey]) {
+        return direction === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+
+    setFilteredData(sortedData);
   };
 
   const indexOfLastRow = currentPage * rowsPerPage;
@@ -62,7 +88,14 @@ const DataTable = ({ title, columns, data, onEdit, onDelete, userId }) => {
             <thead>
               <tr>
                 {columns.map(({ header, accessor }, index) => (
-                  <th key={accessor || index}>{header}</th>
+                  <th key={accessor || index}>
+                    {header}
+                    <SortButton
+                      columnKey={accessor}
+                      currentSort={sortConfig}
+                      onSort={handleSort}
+                    />
+                  </th>
                 ))}
                 <th>Action</th>
               </tr>
@@ -110,7 +143,6 @@ const DataTable = ({ title, columns, data, onEdit, onDelete, userId }) => {
             onPageChange={setCurrentPage}
           />
         )}
-
       </div>
     </div>
   );

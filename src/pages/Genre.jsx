@@ -7,7 +7,7 @@ import { jwtDecode } from 'jwt-decode';
 import Sidebar from '../components/Sidebar';
 import DataTable from '../components/DataTable.js';
 import Navbar from '../components/Navbar';
-import GenreForm from '../components/GenreForm'; // Import GenreForm
+import GenreForm from '../components/GenreForm'; 
 
 const Genre = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormShown, handleSearchButtonClick }) => {
   const [genres, setGenres] = useState([]);
