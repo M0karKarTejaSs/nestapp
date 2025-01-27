@@ -10,11 +10,13 @@ import Author from "./pages/Author";
 import "./App.css";
 import { useDashboard } from "../src/pages/useDashboard"
 
+
 function App() {
   const [isSignUpMode, setIsSignUpMode] = useState(false);
   const [signInData, setSignInData] = useState({ email: "", password: "" });
   const [signUpData, setSignUpData] = useState({ email: "", password: "", confirm_password: "" });
   const [loggedIn, setLoggedIn] = useState(false);
+  const [showPasswords, setShowPasswords] = useState(false);
 
   const handleChange = (e, isSignUp) => {
     const setter = isSignUp ? setSignUpData : setSignInData;
@@ -27,7 +29,7 @@ function App() {
       const response = await fetch("http://localhost:8080/auth/generateToken", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: signInData.email, password: signInData.password }),
+        body: JSON.stringify({ username: signInData.username, password: signInData.password }),
       });
 
       if (response.ok) {
@@ -59,7 +61,7 @@ function App() {
       const response = await fetch("http://localhost:8080/auth/addNewUser", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: signUpData?.email?.split('@')?.[0], username: signUpData.email, password: signUpData.password, roles: "ROLE_USER" }),
+        body: JSON.stringify({ name: signUpData?.name ?? signUpData?.email?.split('@')?.[0], username: signUpData.email, password: signUpData.password, roles: "ROLE_USER" }),
       });
       if (response.ok) {
         toast.success("Sign Up successful! Redirecting to login.", { position: "top-right", autoClose: 3000 });
@@ -103,17 +105,25 @@ function App() {
                     {/* Sign In Form */}
                     <form onSubmit={handleSignIn} className="sign-in-form">
                       <h2>Sign in</h2>
-                      {["email", "password"].map((field) => (
+                      {["username", "password"].map((field) => (
                         <input
                           key={field}
                           className="flds"
-                          type={field === "password" ? "password" : "text"}
+                          type={field === "password" ? (showPasswords ? "text" : "password") : "text"}
                           name={field}
                           value={signInData[field]}
                           onChange={(e) => handleChange(e, false)}
                           placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
                         />
                       ))}
+                      <label style={{ marginRight: "10px" }}>
+                        <input
+                          type="checkbox"
+                          checked={showPasswords}
+                          onChange={() => setShowPasswords(!showPasswords)}
+                        />
+                        <span style={{ marginLeft: "5px" }}>Show Passwords</span>
+                      </label>
                       <input type="submit" value="Sign In" className="btn solid" />
                       <button type="button" className="fg-btn">Forgot Password?</button>
                     </form>
@@ -121,20 +131,57 @@ function App() {
                     {/* Sign Up Form */}
                     <form onSubmit={handleSignUp} className="sign-up-form">
                       <h2>Sign up</h2>
-                      {["email", "password", "confirm_password"].map((field) => (
+
+                      {/* Name Field */}
+                      <input
+                        className="flds"
+                        type="text"
+                        name="name"
+                        value={signUpData.name}
+                        onChange={(e) => handleChange(e, true)}
+                        placeholder="Name"
+                      />
+
+                      {/* Email Field */}
+                      <input
+                        className="flds"
+                        type="email"
+                        name="email"
+                        value={signUpData.email}
+                        onChange={(e) => handleChange(e, true)}
+                        placeholder="Email"
+                      />
+
+                      {/* Password and Confirm Password Fields */}
+                      {["password", "confirm_password"].map((field) => (
                         <input
                           key={field}
                           className="flds"
-                          type={field.includes("password") ? "password" : "email"}
+                          type={field.includes("password") ? (showPasswords ? "text" : "password") : "email"}
                           name={field}
                           value={signUpData[field]}
                           onChange={(e) => handleChange(e, true)}
-                          placeholder={field.charAt(0).toUpperCase() + field.slice(1).replace("_", " ")}
+                          placeholder={field.replace("_", " ").replace(/^./, (str) => str.toUpperCase())}
                         />
                       ))}
+
+                      {/* Show Password Toggle */}
+                      <label style={{ marginRight: "10px" }}>
+                        <input
+                          type="checkbox"
+                          checked={showPasswords}
+                          onChange={() => setShowPasswords(!showPasswords)}
+                        />
+                        <span style={{ marginLeft: "5px" }}>Show Passwords</span>
+                      </label>
+
                       <input type="submit" value="Sign Up" className="btn" />
                     </form>
+
                   </div>
+
+
+
                 </div>
 
                 <div className="panels-container">

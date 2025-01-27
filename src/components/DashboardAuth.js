@@ -26,6 +26,7 @@ const useUserProfile = () => {
             setErrorMessage('Failed to fetch user profile');
           }
         } catch (error) {
+          navigate('/');
           setErrorMessage('An error occurred while fetching the user profile');
         }
       } else {

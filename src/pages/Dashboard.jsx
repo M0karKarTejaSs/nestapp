@@ -1,13 +1,44 @@
 // Dashboard.js
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import '../styles/Dash.css';
 import useUserProfile from '../components/DashboardAuth';
 import { Link } from 'react-router-dom';
 import Sidebar from '../components/Sidebar'
 import Navbar from '../components/Navbar'
+import { retToken } from '../AuthToken';
+import { toast, ToastContainer } from 'react-toastify';
+import { jwtDecode } from 'jwt-decode';
+
 
 const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode, isSearchFormShown, handleSearchButtonClick }) => {
   const { userProfile, errorMessage } = useUserProfile();
+  const [booksCount, setBooksCount] = useState([])
+  const API_BOOK_URL = 'http://localhost:8080/api/book';
+
+  useEffect(() => {
+    const token = retToken();
+    if (token) {
+      const decoded = jwtDecode(token);
+      fetchBooks(decoded.userId);
+    }
+  }, []);
+
+  const fetchBooks = async (userId) => {
+    try {
+      const response = await fetch(API_BOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: retToken() },
+        body: JSON.stringify({ action: 'READ_ALL', userId }),
+      });
+      if (!response.ok) { const err = await response.text(); toast.error(err); return; }
+      const count = await response?.json();
+      setBooksCount(count?.length);
+      console.log(count, "await response?.json()");
+
+    } catch (error) {
+      toast.error('Error fetching books. Please try again later.');
+    }
+  };
 
   return (
     <section id="dashboard">
@@ -34,7 +65,7 @@ const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode,
               <li key={index}>
                 <i className={`bx bxs-${['calendar-check', 'group', 'dollar-circle'][index]}`}></i>
                 <span className="text">
-                  <h3>{[1020, 2834, '$2543'][index]}</h3>
+                  <h3>{[booksCount, 2834, '$2543'][index]}</h3>
                   <p>{text}</p>
                 </span>
               </li>
@@ -73,6 +104,7 @@ const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode,
               </ul>
             </div>
           </div>
+          <ToastContainer />
         </main>
       </section>
     </section>

@@ -1,0 +1,80 @@
+/* Container for the carousel */
+.carousel {
+    position: relative;
+    width: 100%; /* Ensure it takes the full width */
+    max-width: 600px; /* Set a max-width to control the size */
+    margin: auto; /* Center the carousel */
+    overflow: hidden; /* Hide overflow to only show one image at a time */
+  }
+  
+  /* Container for all carousel items (images) */
+  .carousel-items {
+    display: flex;
+    transition: transform 0.5s ease-in-out; /* Smooth transition for image sliding */
+  }
+  
+  /* Each individual item (image) */
+  .carousel-item {
+    width: 100%; /* Each item takes full width */
+    flex-shrink: 0; /* Prevent items from shrinking */
+    text-align: center; /* Center any text or caption */
+  }
+  
+  /* Caption styling (optional) */
+  .carousel-item p {
+    font-size: 14px; /* Adjust size as needed */
+    color: #333; /* Text color */
+    margin-top: 10px;
+  }
+  
+  /* Navigation buttons (previous/next) */
+  .prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    color: white;
+    padding: 10px;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 50%; /* Round buttons */
+    z-index: 10;
+  }
+  
+  .prev {
+    left: 10px; /* Position for the previous button */
+  }
+  
+  .next {
+    right: 10px; /* Position for the next button */
+  }
+  
+  /* Dots navigation */
+  .dots {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+  }
+  
+  .dots button {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #ccc;
+    margin: 0 5px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .dots button.bg-blue-500 {
+    background-color: #007bff; /* Active dot color */
+  }
+  
+  .carousel-item img {
+    width: 100%; /* Image takes full width */
+    height: 120px; /* Set a shorter fixed height for images */
+    object-fit: cover; /* Maintain aspect ratio and cover container */
+    border-radius: 10px; /* Optional rounded corners */
+  }
+  

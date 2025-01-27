@@ -64,14 +64,7 @@ const DataTable = ({ title, columns, data, onEdit, onDelete, userId }) => {
         <div className="head">
           <h3>{title}</h3>
           <div className="filter-container">
-            <div className="download-button-container">
-              {/* <button
-                onClick={() => downloadCSV(title, columns, filteredData)}
-                className="download-csv-btn display-none"
-              >
-                Download CSV
-              </button> */}
-            </div>
+
             <input
               type="text"
               placeholder="Search or filter..."
@@ -80,7 +73,7 @@ const DataTable = ({ title, columns, data, onEdit, onDelete, userId }) => {
               className="search-input"
             />
             <i className="bx bx-search"></i>
-            <i className="bx bx-filter"></i>
+            <i onClick={() => downloadCSV(title, columns, filteredData)} className="bi bi-download"></i>
           </div>
         </div>
         <div className="table-container">
