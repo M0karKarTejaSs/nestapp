@@ -9,15 +9,17 @@ import DataTable from '../components/DataTable';
 import Navbar from '../components/Navbar';
 import GenericForm from '../components/GenericForm';
 
-const API_URL = 'http://localhost:8080/api/book';
+const API_BOOK_URL = 'http://localhost:8080/api/book';
+const API_AUTHOR_URL = 'http://localhost:8080/api/author';
+const API_GENRE_URL = 'http://localhost:8080/api/genre';
 
 const Book = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormShown, handleSearchButtonClick }) => {
     const [books, setBooks] = useState([]);
     const [isAddBook, setIsAddBook] = useState(false);
     const [currentBook, setCurrentBook] = useState(null);
     const [userId, setUserId] = useState(null);
-    const [authorsMap, setAuthorsMap] = useState(new Map());
-    const [genresMap, setGenresMap] = useState(new Map());
+    const [authors, setAuthors] = useState([]);
+    const [genres, setGenres] = useState([]);
 
     const columns = [
         { header: 'Index', accessor: 'index' },
@@ -35,57 +37,74 @@ const Book = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormShow
             const decoded = jwtDecode(token);
             setUserId(decoded.userId);
             fetchBooks(decoded.userId);
+            fetchAuthors(decoded.userId);
+            fetchGenres(decoded.userId);
         }
     }, []);
 
     const fetchBooks = async (userId) => {
         try {
-            const response = await fetch(API_URL, {
+            const response = await fetch(API_BOOK_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Authorization: retToken() },
                 body: JSON.stringify({ action: 'READ_ALL', userId }),
             });
-
-            if (!response.ok) throw new Error('Failed to fetch books');
+            if (!response.ok) { const err = await response.text(); toast.error(err); return; }
 
             const booksData = await response.json();
-            const authors = new Map();
-            const genres = new Map();
-            const mappedBooks = booksData.map((book) => {
-                if (book.author?.authorName && book.author?.authorId) {
-                    authors.set(book.author.authorName, book.author.authorId);
-                }
-                if (book.genre?.genreName && book.genre?.genreId) {
-                    genres.set(book.genre.genreName, book.genre.genreId);
-                }
-
-                return {
-                    ...book,
-                    authorName: book.author?.authorName || '',
-                    genreName: book.genre?.genreName || '',
-                };
-            });
-            console.log(mappedBooks, "vmappedBooks");
-
-            setBooks(mappedBooks);
-            setAuthorsMap(authors);
-            setGenresMap(genres);
+            setBooks(booksData);
         } catch (error) {
             toast.error('Error fetching books. Please try again later.');
+        }
+    };
+
+    const fetchAuthors = async (userId) => {
+        try {
+            const response = await fetch(API_AUTHOR_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: retToken() },
+                body: JSON.stringify({ action: 'READ_ALL', userId }),
+            });
+            if (response.ok) {
+                const authorsData = await response.json();
+                setAuthors(authorsData);
+            } else {
+                throw new Error();
+            }
+        } catch {
+            toast.error('Error fetching authors. Please try again.');
+        }
+    };
+
+    const fetchGenres = async (userId) => {
+        try {
+            const response = await fetch(API_GENRE_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: retToken() },
+                body: JSON.stringify({ action: 'READ_ALL', userId }),
+            });
+            if (response.ok) {
+                const genresData = await response.json();
+                setGenres(genresData);
+            } else {
+                throw new Error();
+            }
+        } catch {
+            toast.error('Error fetching genres. Please try again.');
         }
     };
 
     const handleSave = async (bookData) => {
         const isEditMode = !!currentBook;
         const action = isEditMode ? 'UPDATE' : 'CREATE';
-    
+
         const { title, isbn, publisher, publication_date, price, quantity, description, rating, authorId, genreId } = bookData;
-    
+
         if (!authorId || !genreId) {
             toast.error('Please select valid Author and Genre.');
             return;
         }
-    
+
         const payload = {
             action,
             title: title.trim(),
@@ -100,58 +119,33 @@ const Book = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormShow
             description: description.trim(),
             userId: parseInt(userId, 10),
         };
-    
-        // Include bookId in payload if it's in edit mode
+
         if (isEditMode && currentBook) {
             payload.bookId = currentBook.bookId;
         }
-    
+
         try {
-            const response = await fetch(API_URL, {
+            const response = await fetch(API_BOOK_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Authorization: retToken() },
                 body: JSON.stringify(payload),
             });
-    
+
             if (!response.ok) {
                 const errorData = await response.json();
                 console.error('Error Response:', errorData);
                 throw new Error('Failed to save book');
             }
-    
+
             const savedBook = await response.json();
             console.log('Saved Book:', savedBook);
-    
-            // Update books list
+
             setBooks((prevBooks) =>
                 isEditMode
                     ? prevBooks.map((b) => (b.bookId === savedBook.bookId ? savedBook : b))
                     : [...prevBooks, savedBook]
             );
-    
-            // Update authorsMap and genresMap if necessary
-            if (savedBook.author?.authorName && savedBook.author?.authorId) {
-                setAuthorsMap((prevAuthorsMap) => {
-                    if (!prevAuthorsMap.has(savedBook.author.authorName)) {
-                        const updatedMap = new Map(prevAuthorsMap);
-                        updatedMap.set(savedBook.author.authorName, savedBook.author.authorId);
-                        return updatedMap;
-                    }
-                    return prevAuthorsMap;
-                });
-            }
-    
-            if (savedBook.genre?.genreName && savedBook.genre?.genreId) {
-                setGenresMap((prevGenresMap) => {
-                    if (!prevGenresMap.has(savedBook.genre.genreName)) {
-                        const updatedMap = new Map(prevGenresMap);
-                        updatedMap.set(savedBook.genre.genreName, savedBook.genre.genreId);
-                        return updatedMap;
-                    }
-                    return prevGenresMap;
-                });
-            }
-    
+
             resetForm();
             fetchBooks(payload.userId);
             toast.success(`Book ${isEditMode ? 'updated' : 'added'} successfully!`);
@@ -160,12 +154,10 @@ const Book = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormShow
             toast.error(`Failed to ${isEditMode ? 'update' : 'add'} book. Please try again.`);
         }
     };
-    
-
 
     const handleDelete = async (bookId) => {
         try {
-            const response = await fetch(API_URL, {
+            const response = await fetch(API_BOOK_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Authorization: retToken() },
                 body: JSON.stringify({ action: 'DELETE', bookId, userId }),
@@ -184,9 +176,6 @@ const Book = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormShow
         setIsAddBook(false);
         setCurrentBook(null);
     };
-
-    const getDropdownOptions = (map) =>
-        Array.from(map.entries()).map(([name, id]) => ({ value: id, label: name }));
 
     return (
         <section id="dashboard">
@@ -219,11 +208,11 @@ const Book = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormShow
                                 index: index + 1,
                                 title: book.title,
                                 isbn: book.isbn,
-                                authorName: book.authorName,
-                                genreName: book.genreName,
+                                authorName: book.author?.authorName || '',
+                                genreName: book.genre?.genreName || '',
                                 price: book.price,
                                 quantity: book.quantity,
-                                bookId: book.bookId, // Ensure bookId is included here
+                                bookId: book.bookId,
                             }))}
                             onEdit={(book) => {
                                 setCurrentBook(book);
@@ -238,8 +227,6 @@ const Book = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormShow
                                 }
                             }}
                         />
-
-
                     ) : (
                         <GenericForm
                             isEditMode={!!currentBook}
@@ -267,7 +254,7 @@ const Book = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormShow
                                     name: 'authorId',
                                     label: 'Author',
                                     type: 'dropdown',
-                                    options: getDropdownOptions(authorsMap),
+                                    options: authors.map((author) => ({ value: author.authorId, label: author.authorName })),
                                     defaultValue: currentBook?.authorId || '',
                                     validation: { required: true, message: 'Author selection is required' }
                                 },
@@ -275,7 +262,7 @@ const Book = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormShow
                                     name: 'genreId',
                                     label: 'Genre',
                                     type: 'dropdown',
-                                    options: getDropdownOptions(genresMap),
+                                    options: genres.map((genre) => ({ value: genre.genreId, label: genre.genreName })),
                                     defaultValue: currentBook?.genreId || '',
                                     validation: { required: true, message: 'Genre selection is required' }
                                 },

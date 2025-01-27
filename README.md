@@ -96,3 +96,4 @@ while update dont check self duplicacy
 dynamic table
 tried dynamic crud fetch
 dynamic post options
+on page manual refresh ask user changes not saved do u want to refresh 

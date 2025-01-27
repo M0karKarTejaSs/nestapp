@@ -56,10 +56,10 @@ function App() {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/api/register", {
+      const response = await fetch("http://localhost:8080/auth/addNewUser", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: signUpData.email, password: signUpData.password }),
+        body: JSON.stringify({ name: signUpData?.email?.split('@')?.[0], username: signUpData.email, password: signUpData.password, roles: "ROLE_USER" }),
       });
       if (response.ok) {
         toast.success("Sign Up successful! Redirecting to login.", { position: "top-right", autoClose: 3000 });
