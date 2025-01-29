@@ -1,78 +1,57 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/Dash.css';
 import { Link } from 'react-router-dom';
-import Sidebar from '../components/Sidebar'
-import Navbar from '../components/Navbar'
+import Sidebar from '../components/Sidebar';
+import Navbar from '../components/Navbar';
 import { retToken } from '../AuthToken';
 import { toast, ToastContainer } from 'react-toastify';
 import { jwtDecode } from 'jwt-decode';
 
-
 const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode, isSearchFormShown, handleSearchButtonClick }) => {
-  const [booksCount, setBooksCount] = useState([]);
-  const [authorsCount, setAuthorsCount] = useState([]);
-  const [genresCount, setGenresCount] = useState([]);
+  const [counts, setCounts] = useState({
+    books: 0,
+    authors: 0,
+    genres: 0,
+  });
 
-  const API_BOOK_URL = 'http://localhost:8080/api/book';
+  const API_URLS = {
+    books: 'http://localhost:8080/api/book',
+    authors: 'http://localhost:8080/api/author',
+    genres: 'http://localhost:8080/api/genre',
+  };
 
   useEffect(() => {
     const token = retToken();
     if (token) {
       const decoded = jwtDecode(token);
-      fetchBooks(decoded.userId);
-      fetchAuthors(decoded.userId);
-      fetchGenres(decoded.userId);
+      fetchData('books', decoded.userId);
+      fetchData('authors', decoded.userId);
+      fetchData('genres', decoded.userId);
     }
   }, []);
 
-  const fetchBooks = async (userId) => {
+  const fetchData = async (type, userId) => {
+    const API_URL = API_URLS[type];
     try {
-      const response = await fetch(API_BOOK_URL, {
+      const response = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: retToken() },
         body: JSON.stringify({ action: 'READ_ALL', userId }),
       });
-      if (!response.ok) { const err = await response.text(); toast.error(err); return; }
-      const count = await response?.json();
-      setBooksCount(count?.length);
-      console.log(count, "await response?.json()");
 
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        toast.error(errorMessage);
+        return;
+      }
+
+      const data = await response.json();
+      setCounts((prevCounts) => ({
+        ...prevCounts,
+        [type]: data.length,
+      }));
     } catch (error) {
-      toast.error('Error fetching books. Please try again later.');
-    }
-  };
-
-  const fetchAuthors = async (userId) => {
-    try {
-      const response = await fetch('http://localhost:8080/api/author', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: retToken() },
-        body: JSON.stringify({ action: 'READ_ALL', userId }),
-      });
-      if (!response.ok) { const err = await response.text(); toast.error(err); return; }
-      const count = await response?.json();
-      setAuthorsCount(count?.length);
-      console.log(count, "await response?.json()");
-
-    } catch (error) {
-      toast.error('Error fetching books. Please try again later.');
-    }
-  };
-
-  const fetchGenres = async (userId) => {
-    try {
-      const response = await fetch('http://localhost:8080/api/genre', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: retToken() },
-        body: JSON.stringify({ action: 'READ_ALL', userId }),
-      });
-      if (!response.ok) { const err = await response.text(); toast.error(err); return; }
-      const count = await response?.json();
-      setGenresCount(count?.length);
-      console.log(count, "await response?.json()");
-
-    } catch (error) {
-      toast.error('Error fetching books. Please try again later.');
+      toast.error(`Error fetching ${type}. Please try again later.`);
     }
   };
 
@@ -91,22 +70,20 @@ const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode,
                 <li><Link to="#" className="active">Home</Link></li>
               </ul>
             </div>
-            {/* <a href="#" className="btn-download"><i className="bx bxs-cloud-download"></i><span className="text">Download PDF</span></a> */}
           </div>
 
           <ul className="box-info">
-            {['Total Books', 'Authors', 'Genres'].map((text, index) => (
+            {['books', 'authors', 'genres'].map((type, index) => (
               <li key={index}>
                 <i className={`bx bxs-${['calendar-check', 'group', 'grid'][index]}`}></i>
-                {/* <i className={`bx bxs-${['calendar-check', 'group', 'dollar-circle'][index]}`}></i> */}
                 <span className="text">
-                  <h3>{[booksCount, authorsCount, genresCount][index]}</h3>
-                  {/* <h3>{[booksCount, authorsCount, '$2543'][index]}</h3> */}
-                  <p>{text}</p>
+                  <h3>{counts[type]}</h3>
+                  <p>{['Total Books', 'Authors', 'Genres'][index]}</p>
                 </span>
               </li>
             ))}
           </ul>
+
           <div className="table-data">
             <div className="order">
               <div className="head">
@@ -114,7 +91,9 @@ const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode,
                 <i className="bx bx-search"></i><i className="bx bx-filter"></i>
               </div>
               <table>
-                <thead><tr><th>User</th><th>Date Order</th><th>Status</th></tr></thead>
+                <thead>
+                  <tr><th>User</th><th>Date Order</th><th>Status</th></tr>
+                </thead>
                 <tbody>
                   {['Completed', 'Pending', 'Process'].map((status, index) => (
                     <tr key={index}>
@@ -126,6 +105,7 @@ const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode,
                 </tbody>
               </table>
             </div>
+
             <div className="todo">
               <div className="head">
                 <h3>To-Dos</h3>
@@ -140,6 +120,7 @@ const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode,
               </ul>
             </div>
           </div>
+
           <ToastContainer />
         </main>
       </section>
