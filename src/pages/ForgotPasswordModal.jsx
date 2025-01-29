@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import '../styles/ForgotPasswordModal.css';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import "../styles/ForgotPasswordModal.css";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ForgotPasswordModal = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -10,7 +10,8 @@ const ForgotPasswordModal = () => {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [step, setStep] = useState(1);
-    const [showPassword, setShowPassword] = useState(false); // New state for toggling password visibility
+    const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const toggleModal = () => setIsModalOpen(prev => !prev);
     const handleChange = setter => e => setter(e.target.value);
@@ -20,6 +21,7 @@ const ForgotPasswordModal = () => {
     };
 
     const handleApiRequest = async (action, body) => {
+        setIsLoading(true);
         try {
             const res = await fetch("http://localhost:8080/api/pwd", {
                 method: 'POST',
@@ -28,14 +30,14 @@ const ForgotPasswordModal = () => {
             });
             const data = await res.json();
             if (!res.ok) {
-                console.log(data, "err");   
-
-                throw new Error(  data.error ?? 'Request failed');
+                throw new Error(data.error || 'Request failed');
             }
             return data;
         } catch (error) {
             showToast(error.message || 'Something went wrong', 'error');
             throw error;
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -67,18 +69,23 @@ const ForgotPasswordModal = () => {
 
     return (
         <div>
-            <button type="button" className="fg-btn" onClick={toggleModal}>
+            <button type="button" className="fg-btn" onClick={toggleModal} disabled={isLoading}>
                 Forgot Password?
             </button>
 
             {isModalOpen && (
                 <div className="modal">
-                    <div className="modalContent">
+                    <div className={`modalContent ${isLoading ? 'loading' : ''}`}>
                         <div className="modalHeader">
                             <button className="close" onClick={toggleModal}>×</button>
                             <h1>Reset Your Password</h1>
                         </div>
                         <form className="modalBody" onSubmit={e => e.preventDefault()}>
+                            {isLoading && (
+                                <div className="loader-container">
+                                    <div className="loader"></div>
+                                </div>
+                            )}
                             {step === 1 ? (
                                 <>
                                     <input
@@ -88,8 +95,14 @@ const ForgotPasswordModal = () => {
                                         value={email}
                                         onChange={handleChange(setEmail)}
                                         required
+                                        disabled={isLoading}
                                     />
-                                    <button className="submitBtn" type="button" onClick={genOtp}>
+                                    <button
+                                        className="submitBtn"
+                                        type="button"
+                                        onClick={genOtp}
+                                        disabled={isLoading}
+                                    >
                                         Send OTP
                                     </button>
                                 </>
@@ -109,22 +122,25 @@ const ForgotPasswordModal = () => {
                                         value={otp}
                                         onChange={handleChange(setOtp)}
                                         required
+                                        disabled={isLoading}
                                     />
                                     <input
                                         className="input"
                                         placeholder="New Password"
-                                        type={showPassword ? "text" : "password"} // Toggle password visibility
+                                        type={showPassword ? "text" : "password"}
                                         value={newPassword}
                                         onChange={handleChange(setNewPassword)}
                                         required
+                                        disabled={isLoading}
                                     />
                                     <input
                                         className="input"
                                         placeholder="Confirm Password"
-                                        type={showPassword ? "text" : "password"} // Toggle password visibility
+                                        type={showPassword ? "text" : "password"}
                                         value={confirmPassword}
                                         onChange={handleChange(setConfirmPassword)}
                                         required
+                                        disabled={isLoading}
                                     />
                                     <div className="showPasswordContainer">
                                         <input
@@ -132,17 +148,25 @@ const ForgotPasswordModal = () => {
                                             id="showPassword"
                                             checked={showPassword}
                                             onChange={() => setShowPassword(!showPassword)}
+                                            disabled={isLoading}
                                         />
                                         <label htmlFor="showPassword">Show Password</label>
                                     </div>
-                                    <button className="submitBtn" type="button" onClick={authOtp}>
+                                    <button
+                                        className="submitBtn"
+                                        type="button"
+                                        onClick={authOtp}
+                                        disabled={isLoading}
+                                    >
                                         Reset Password
                                     </button>
                                 </>
                             )}
                         </form>
                         <div className="modalFooter">
-                            <button className="cancelBtn" onClick={toggleModal}>Cancel</button>
+                            <button className="cancelBtn" onClick={toggleModal} disabled={isLoading}>
+                                Cancel
+                            </button>
                         </div>
                     </div>
                 </div>

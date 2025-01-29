@@ -98,7 +98,7 @@ function App() {
               <div className={`container ${isSignUpMode ? "sign-up-mode" : ""}`}>
                 <div className="forms-container">
                   <img src="/assets/pxlogo.png" alt="Logo" className="fixed-logo" />
-                  <h1 className="fixed-logo-content" style={{ color: isSignUpMode ? "#9d00ff" : "#ffffff" }}>Book Stock</h1>
+                  <h1 className="fixed-logo-content" style={{ color: isSignUpMode ? "#9d00ff" : "#ffffff" }}>Nest Book</h1>
 
                   <div className="signin-signup">
                     {/* Sign In Form */}
@@ -204,7 +204,7 @@ function App() {
                 </div>
 
                 <footer className="footer">
-                  <p>Created with ❤️ by <strong>Tech Titans</strong></p>
+                  <p>Created by <strong>Tech Titans</strong></p>
                 </footer>
               </div>
             )

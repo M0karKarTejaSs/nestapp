@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import handleLogout from '../components/Logout';
 
 const Sidebar = ({ isSidebarHidden }) => {
-  const location = useLocation(); // To highlight the active link
+  const location = useLocation();
 
   const menuItems = [
     { name: 'Dashboard', icon: 'bi-bar-chart' },
@@ -12,7 +12,6 @@ const Sidebar = ({ isSidebarHidden }) => {
     { name: 'Author', icon: 'bi-person' },
     { name: 'Team', icon: 'bi-people' },
   ];
-
 
   return (
     <section id="sidebar" className={isSidebarHidden ? 'hide' : ''}>
@@ -34,16 +33,18 @@ const Sidebar = ({ isSidebarHidden }) => {
         })}
       </ul>
       <ul className="side-menu">
-        <li>
-          <Link
-            to="/settings">
-            <i style={{ paddingRight: "0.3rem" }} className="bi-gear-fill"></i>
+        <li style={{ marginLeft: '1rem' }}>
+          <Link to="/settings" className="settings">
+            <i style={{ paddingRight: "0.5rem" }} className="bi-gear"></i>  {/* Increased space between icon and text */}
             <span className="text">{isSidebarHidden ? '' : 'Settings'}</span>
           </Link>
         </li>
-        <li>
+
+        <div className="divider"></div>
+
+        <li style={{ marginLeft: '1rem' }}>
           <Link to="#" className="logout" onClick={handleLogout}>
-            <i style={{ paddingRight: "0.3rem" }} className="bi-box-arrow-right"></i>
+            <i style={{ paddingRight: "0.5rem" }} className="bi-box-arrow-right"></i>
             <span className="text">{isSidebarHidden ? '' : 'Logout'}</span>
           </Link>
         </li>

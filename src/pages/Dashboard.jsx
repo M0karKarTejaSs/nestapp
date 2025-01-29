@@ -1,7 +1,5 @@
-// Dashboard.js
 import React, { useEffect, useState } from 'react';
 import '../styles/Dash.css';
-import useUserProfile from '../components/DashboardAuth';
 import { Link } from 'react-router-dom';
 import Sidebar from '../components/Sidebar'
 import Navbar from '../components/Navbar'
@@ -11,7 +9,6 @@ import { jwtDecode } from 'jwt-decode';
 
 
 const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode, isSearchFormShown, handleSearchButtonClick }) => {
-  const { userProfile, errorMessage } = useUserProfile();
   const [booksCount, setBooksCount] = useState([]);
   const [authorsCount, setAuthorsCount] = useState([]);
   const [genresCount, setGenresCount] = useState([]);
@@ -96,9 +93,7 @@ const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode,
             </div>
             {/* <a href="#" className="btn-download"><i className="bx bxs-cloud-download"></i><span className="text">Download PDF</span></a> */}
           </div>
-          <div className="profile-message">
-            <h3>{userProfile?.message || errorMessage || 'Loading profile...'}</h3>
-          </div>
+
           <ul className="box-info">
             {['Total Books', 'Authors', 'Genres'].map((text, index) => (
               <li key={index}>
