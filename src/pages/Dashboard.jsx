@@ -6,6 +6,10 @@ import Navbar from '../components/Navbar';
 import { retToken } from '../AuthToken';
 import { toast, ToastContainer } from 'react-toastify';
 import { jwtDecode } from 'jwt-decode';
+import { Doughnut } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode, isSearchFormShown, handleSearchButtonClick }) => {
   const [counts, setCounts] = useState({
@@ -13,6 +17,8 @@ const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode,
     authors: 0,
     genres: 0,
   });
+
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const API_URLS = {
     books: 'http://localhost:8080/api/book',
@@ -55,11 +61,42 @@ const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode,
     }
   };
 
+  const chartData = {
+    labels: ['Books', 'Authors', 'Genres'],
+    datasets: [
+      {
+        data: [counts.books, counts.authors, counts.genres],
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+        hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const images = [
+    "/books/jrr.jpg",
+    "/books/narnia.jpg",
+    "/books/stephen.jpg"
+  ];
+
+  const handlePrev = () => {
+    setActiveIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
+  };
+
+  const handleNext = () => {
+    setActiveIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
+  };
+
   return (
     <section id="dashboard">
       <Sidebar isSidebarHidden={isSidebarHidden} />
       <section id="content">
-        <Navbar toggleSidebar={toggleSidebar} isSearchFormShown={isSearchFormShown} handleSearchButtonClick={handleSearchButtonClick} toggleDarkMode={toggleDarkMode} />
+        <Navbar
+          toggleSidebar={toggleSidebar}
+          isSearchFormShown={isSearchFormShown}
+          handleSearchButtonClick={handleSearchButtonClick}
+          toggleDarkMode={toggleDarkMode}
+        />
         <main>
           <div className="head-title">
             <div className="left">
@@ -84,43 +121,23 @@ const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode,
             ))}
           </ul>
 
-          <div className="table-data">
-            <div className="order">
-              <div className="head">
-                <h3>Recent Orders</h3>
-                <i className="bx bx-search"></i><i className="bx bx-filter"></i>
-              </div>
-              <table>
-                <thead>
-                  <tr><th>User</th><th>Date Order</th><th>Status</th></tr>
-                </thead>
-                <tbody>
-                  {['Completed', 'Pending', 'Process'].map((status, index) => (
-                    <tr key={index}>
-                      <td><img src="/assets/user.png" alt="User" /><p>John Doe</p></td>
-                      <td>01-10-2021</td>
-                      <td><span className={`status ${status.toLowerCase()}`}>{status}</span></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          <div className="statistics-carousel-container">
+            <div className="chart-section">
+              <h3>Statistics Overview</h3>
+              <Doughnut data={chartData} />
             </div>
-
-            <div className="todo">
-              <div className="head">
-                <h3>To-Dos</h3>
-                <i className="bx bx-plus-circle"></i><i className="bx bx-filter"></i>
+            <div className="carousel-section">
+              <div className="carousel-inner">
+                <div className="carousel-item active">
+                  <div className="carousel-images">
+                    {images.map((image, index) => (
+                      <img key={index} className="carousel-image" src={image} alt={`Slide ${index + 1}`} />
+                    ))}
+                  </div>
+                </div>
               </div>
-              <ul className="todo-list">
-                {['Finish Dashboard Design', 'Fix Search Functionality', 'Implement API for Analytics', 'Review New User Feedback'].map((task, index) => (
-                  <li key={index} className="completed">
-                    <p>{task}</p><i className="bx bx-check-circle"></i>
-                  </li>
-                ))}
-              </ul>
             </div>
           </div>
-
           <ToastContainer />
         </main>
       </section>
