@@ -55,13 +55,13 @@ const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode,
                 <li><Link to="#" className="active">Home</Link></li>
               </ul>
             </div>
-            <a href="#" className="btn-download"><i className="bx bxs-cloud-download"></i><span className="text">Download PDF</span></a>
+            {/* <a href="#" className="btn-download"><i className="bx bxs-cloud-download"></i><span className="text">Download PDF</span></a> */}
           </div>
           <div className="profile-message">
             <h3>{userProfile?.message || errorMessage || 'Loading profile...'}</h3>
           </div>
           <ul className="box-info">
-            {['New Orders', 'Visitors', 'Total Sales'].map((text, index) => (
+            {['Total Books', 'Visitors', 'Total Sales'].map((text, index) => (
               <li key={index}>
                 <i className={`bx bxs-${['calendar-check', 'group', 'dollar-circle'][index]}`}></i>
                 <span className="text">

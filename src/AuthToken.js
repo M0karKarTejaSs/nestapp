@@ -1,4 +1,4 @@
-export const retToken = ()=>{
+export const retToken = () => {
     const token = localStorage.getItem("AuthToken");
-    return `Bearer ${token}`;
+    return `Bearer ${atob(token)}`;
 }

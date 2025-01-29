@@ -11,8 +11,8 @@ const DataTable = ({ title, columns, data, onEdit, onDelete, userId }) => {
   const rowsPerPage = 8;
 
   const [sortConfig, setSortConfig] = useState({
-    key: '', // Column to sort by
-    direction: 'asc', // Direction of sorting (asc or desc)
+    key: '', 
+    direction: 'asc', 
   });
 
   useEffect(() => {

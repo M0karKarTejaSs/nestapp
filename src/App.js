@@ -37,7 +37,7 @@ function App() {
         setLoggedIn(true);
         const responseData = await response.json(); // Parse the JSON from the response
         console.log(responseData.data, "Parsed response");
-        localStorage.setItem("AuthToken", responseData.data);
+        localStorage.setItem("AuthToken", btoa(responseData.data));
 
       } else {
         toast.error("Invalid credentials, please try again.", { position: "top-right", autoClose: 3000 });

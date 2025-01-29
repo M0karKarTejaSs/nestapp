@@ -6,12 +6,13 @@ const Sidebar = ({ isSidebarHidden }) => {
   const location = useLocation(); // To highlight the active link
 
   const menuItems = [
-    { name: 'Dashboard', icon: 'bxs-dashboard' },
-    { name: 'Genre', icon: 'bxs-category' },
-    { name: 'Book', icon: 'bxs-book' },
-    { name: 'Author', icon: 'bxs-user' },
-    { name: 'Team', icon: 'bxs-group' },
+    { name: 'Dashboard', icon: 'bi-bar-chart' },
+    { name: 'Genre', icon: 'bi-grid' },
+    { name: 'Book', icon: 'bi-book' },
+    { name: 'Author', icon: 'bi-person' },
+    { name: 'Team', icon: 'bi-people' },
   ];
+
 
   return (
     <section id="sidebar" className={isSidebarHidden ? 'hide' : ''}>
@@ -34,19 +35,21 @@ const Sidebar = ({ isSidebarHidden }) => {
       </ul>
       <ul className="side-menu">
         <li>
-          <Link to="/settings">
-            <i className="bx bxs-cog"></i>
+          <Link
+            to="/settings">
+            <i style={{ paddingRight: "0.3rem" }} className="bi-gear-fill"></i>
             <span className="text">Settings</span>
           </Link>
         </li>
         <li>
           <Link to="#" className="logout" onClick={handleLogout}>
-            <i className="bx bxs-log-out-circle"></i>
+            <i style={{ paddingRight: "0.3rem" }} className="bi-box-arrow-right"></i>
             <span className="text">Logout</span>
           </Link>
         </li>
       </ul>
-    </section>
+
+    </section >
   );
 };
 
