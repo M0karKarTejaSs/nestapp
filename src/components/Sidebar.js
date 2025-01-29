@@ -38,13 +38,13 @@ const Sidebar = ({ isSidebarHidden }) => {
           <Link
             to="/settings">
             <i style={{ paddingRight: "0.3rem" }} className="bi-gear-fill"></i>
-            <span className="text">Settings</span>
+            <span className="text">{isSidebarHidden ? '' : 'Settings'}</span>
           </Link>
         </li>
         <li>
           <Link to="#" className="logout" onClick={handleLogout}>
             <i style={{ paddingRight: "0.3rem" }} className="bi-box-arrow-right"></i>
-            <span className="text">Logout</span>
+            <span className="text">{isSidebarHidden ? '' : 'Logout'}</span>
           </Link>
         </li>
       </ul>

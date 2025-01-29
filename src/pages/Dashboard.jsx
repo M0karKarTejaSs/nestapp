@@ -12,7 +12,10 @@ import { jwtDecode } from 'jwt-decode';
 
 const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode, isSearchFormShown, handleSearchButtonClick }) => {
   const { userProfile, errorMessage } = useUserProfile();
-  const [booksCount, setBooksCount] = useState([])
+  const [booksCount, setBooksCount] = useState([]);
+  const [authorsCount, setAuthorsCount] = useState([]);
+  const [genresCount, setGenresCount] = useState([]);
+
   const API_BOOK_URL = 'http://localhost:8080/api/book';
 
   useEffect(() => {
@@ -20,6 +23,8 @@ const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode,
     if (token) {
       const decoded = jwtDecode(token);
       fetchBooks(decoded.userId);
+      fetchAuthors(decoded.userId);
+      fetchGenres(decoded.userId);
     }
   }, []);
 
@@ -33,6 +38,40 @@ const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode,
       if (!response.ok) { const err = await response.text(); toast.error(err); return; }
       const count = await response?.json();
       setBooksCount(count?.length);
+      console.log(count, "await response?.json()");
+
+    } catch (error) {
+      toast.error('Error fetching books. Please try again later.');
+    }
+  };
+
+  const fetchAuthors = async (userId) => {
+    try {
+      const response = await fetch('http://localhost:8080/api/author', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: retToken() },
+        body: JSON.stringify({ action: 'READ_ALL', userId }),
+      });
+      if (!response.ok) { const err = await response.text(); toast.error(err); return; }
+      const count = await response?.json();
+      setAuthorsCount(count?.length);
+      console.log(count, "await response?.json()");
+
+    } catch (error) {
+      toast.error('Error fetching books. Please try again later.');
+    }
+  };
+
+  const fetchGenres = async (userId) => {
+    try {
+      const response = await fetch('http://localhost:8080/api/genre', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: retToken() },
+        body: JSON.stringify({ action: 'READ_ALL', userId }),
+      });
+      if (!response.ok) { const err = await response.text(); toast.error(err); return; }
+      const count = await response?.json();
+      setGenresCount(count?.length);
       console.log(count, "await response?.json()");
 
     } catch (error) {
@@ -61,11 +100,13 @@ const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode,
             <h3>{userProfile?.message || errorMessage || 'Loading profile...'}</h3>
           </div>
           <ul className="box-info">
-            {['Total Books', 'Visitors', 'Total Sales'].map((text, index) => (
+            {['Total Books', 'Authors', 'Genres'].map((text, index) => (
               <li key={index}>
-                <i className={`bx bxs-${['calendar-check', 'group', 'dollar-circle'][index]}`}></i>
+                <i className={`bx bxs-${['calendar-check', 'group', 'grid'][index]}`}></i>
+                {/* <i className={`bx bxs-${['calendar-check', 'group', 'dollar-circle'][index]}`}></i> */}
                 <span className="text">
-                  <h3>{[booksCount, 2834, '$2543'][index]}</h3>
+                  <h3>{[booksCount, authorsCount, genresCount][index]}</h3>
+                  {/* <h3>{[booksCount, authorsCount, '$2543'][index]}</h3> */}
                   <p>{text}</p>
                 </span>
               </li>
