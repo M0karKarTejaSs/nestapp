@@ -3,13 +3,12 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Dashboard from "./pages/Dashboard";
-import DashboardTest from "./pages/DashboardTest";
 import Genre from "./pages/Genre";
 import Book from "./pages/Book";
 import Author from "./pages/Author";
 import "./App.css";
 import { useDashboard } from "../src/pages/useDashboard"
-
+import ForgotPasswordModal from "./pages/ForgotPasswordModal"
 
 function App() {
   const [isSignUpMode, setIsSignUpMode] = useState(false);
@@ -61,7 +60,7 @@ function App() {
       const response = await fetch("http://localhost:8080/auth/addNewUser", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: signUpData?.name ?? signUpData?.email?.split('@')?.[0], username: signUpData.email, password: signUpData.password, roles: "ROLE_USER" }),
+        body: JSON.stringify({ name: signUpData?.name ?? signUpData?.email?.split('@')?.[0], username: signUpData.email, email: signUpData.email, password: signUpData.password, roles: "ROLE_USER" }),
       });
       if (response.ok) {
         toast.success("Sign Up successful! Redirecting to login.", { position: "top-right", autoClose: 3000 });
@@ -125,7 +124,7 @@ function App() {
                         <span style={{ marginLeft: "5px" }}>Show Passwords</span>
                       </label>
                       <input type="submit" value="Sign In" className="btn solid" />
-                      <button type="button" className="fg-btn">Forgot Password?</button>
+                      <ForgotPasswordModal />
                     </form>
 
                     {/* Sign Up Form */}
