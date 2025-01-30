@@ -50,18 +50,18 @@ const GenericForm = ({
 
     const field = fields.find((f) => f.name === fieldName);
 
-    // Allow numeric input for specific fields
+
     if (field.type === 'number') {
-      value = value.replace(/\D/g, ''); // Remove non-numeric characters
+      value = value.replace(/\D/g, '');
     }
 
     if (field.type === 'text') {
-      value = value.replace(/[0-9]/g, ''); // Remove non-numeric characters
+      value = value.replace(/[0-9]/g, '');
     }
 
-    // Restrict numbers in the title field
+
     if (['title', 'publisher'].includes(fieldName)) {
-      value = value.replace(/[0-9]/g, ''); // Remove numeric characters
+      value = value.replace(/[0-9]/g, '');
     }
 
     setFormData((prevData) => ({ ...prevData, [fieldName]: value }));
@@ -132,7 +132,7 @@ const GenericForm = ({
                   placeholder={field.placeholder}
                   value={formData[field.name] || ''}
                   onChange={(e) => handleChange(e, field.name)}
-                  disabled={isEditMode && field.name === 'title'} // Disable title field in edit mode
+                  disabled={isEditMode && field.name === 'title'}
                   style={{
                     width: '100%',
                     padding: '6px',

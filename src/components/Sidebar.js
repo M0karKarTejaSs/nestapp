@@ -11,7 +11,7 @@ const Sidebar = ({ isSidebarHidden }) => {
     { name: 'Genre', icon: 'bi-grid' },
     { name: 'Book', icon: 'bi-book' },
     { name: 'Author', icon: 'bi-person' },
-    { name: 'Team', icon: 'bi-people' },
+    // { name: 'Team', icon: 'bi-people' },
   ];
 
   const safeHandleLogout = () => {
@@ -45,12 +45,12 @@ const Sidebar = ({ isSidebarHidden }) => {
         {menuItems.map(renderMenuItem)}
       </ul>
       <ul className="side-menu">
-        <li style={{ marginLeft: '1rem' }}>
+        {/* <li style={{ marginLeft: '1rem' }}>
           <Link to="/settings" className="settings">
             <i style={{ paddingRight: "0.5rem" }} className="bi-gear" />
             <span className="text">{isSidebarHidden ? '' : 'Settings'}</span>
           </Link>
-        </li>
+        </li> */}
 
         <div className="divider" />
 

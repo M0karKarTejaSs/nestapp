@@ -28,7 +28,6 @@ function App() {
   const handleSignIn = async (e) => {
     e.preventDefault();
 
-    // Check if password matches the regex
     if (!passwordRegex.test(signInData.password)) {
       toast.error("Password must be alphanumeric.", { position: "top-right", autoClose: 3000 });
       return;
@@ -45,7 +44,7 @@ function App() {
         const responseData = await response.json();
         toast.success("Login successful!", { position: "top-right", autoClose: 3000 });
         setLoggedIn(true);
-        localStorage.setItem("AuthToken", btoa(responseData.data));
+        localStorage.setItem("AuthToken", btoa(responseData?.data ?? ""));
       } else {
         toast.error("Invalid credentials, please try again.", { position: "top-right", autoClose: 3000 });
       }
@@ -60,7 +59,6 @@ function App() {
   const handleSignUp = async (e) => {
     e.preventDefault();
 
-    // Check if password matches the regex
     if (!passwordRegex.test(signUpData.password)) {
       toast.error("Password must be alphanumeric.", { position: "top-right", autoClose: 3000 });
       return;
@@ -82,6 +80,7 @@ function App() {
           roles: "ROLE_USER"
         }),
       });
+
       if (response.ok) {
         toast.success("Sign Up successful! Redirecting to login.", { position: "top-right", autoClose: 3000 });
         setIsSignUpMode(false);
@@ -109,7 +108,6 @@ function App() {
                 <div className="forms-container">
                   <img src="/assets/pxlogo.png" alt="Logo" className="fixed-logo" />
                   <h1 className="fixed-logo-content" style={{ color: isSignUpMode ? "#9d00ff" : "#ffffff" }}>Nest Book</h1>
-
                   <div className="signin-signup">
                     <form onSubmit={handleSignIn} className="sign-in-form">
                       <h2>Sign in</h2>
@@ -135,7 +133,6 @@ function App() {
                       <input type="submit" value="Sign In" className="btn solid" />
                       <ForgotPasswordModal />
                     </form>
-
                     <form onSubmit={handleSignUp} className="sign-up-form">
                       <h2>Sign up</h2>
                       {["name", "email", "password", "confirm_password"].map((field) => (
@@ -161,7 +158,6 @@ function App() {
                     </form>
                   </div>
                 </div>
-
                 <div className="panels-container">
                   <div className="panel left-panel">
                     <div className="content">
@@ -171,7 +167,6 @@ function App() {
                     </div>
                     <img src="/assets/log.svg" className="image" alt="Log" />
                   </div>
-
                   <div className="panel right-panel">
                     <div className="content">
                       <h3>One of us?</h3>
@@ -185,8 +180,6 @@ function App() {
             )
           }
         />
-        
-        {/* Protected Routes */}
         <Route
           path="/dashboard"
           element={localStorage.getItem('AuthToken') ? <Dashboard {...{ isSidebarHidden, isSearchFormShown, isDarkMode, toggleSidebar, toggleDarkMode, handleSearchButtonClick }} /> : <Navigate to="/" />}

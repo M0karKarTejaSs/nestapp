@@ -1,0 +1,43 @@
+//Insert Genre
+INSERT INTO genre (genre_name, description, user_id, created_at, updated_at) 
+VALUES 
+  ('Fiction', 'Genre of fictional books', 1, NOW(), NOW()),
+  ('Non-Fiction', 'Genre of non-fictional books', 1, NOW(), NOW()),
+  ('Science Fiction', 'Genre of science fiction books', 1, NOW(), NOW());
+
+//Insert author
+INSERT INTO author (author_name, biography, user_id, created_at, updated_at) 
+VALUES 
+  ('George Orwell', 'English novelist, essayist, journalist, and critic.', 1, NOW(), NOW()),
+  ('J.K. Rowling', 'British author, best known for the Harry Potter series.', 1, NOW(), NOW()),
+  ('Isaac Asimov', 'American author and professor of biochemistry, known for his science fiction works.', 1, NOW(), NOW());
+
+//Insert Books
+INSERT INTO books (isbn, price, publication_date, publisher, quantity, rating, title, created_at, updated_at, author_id, genre_id, user_id) 
+VALUES
+  ('9780141036137', 12.99, '2021-05-01', 'Penguin Books', 10, 4.5, '1984', NOW(), NOW(), 1, 1, 1),
+  ('9780439064873', 20.99, '2000-07-08', 'Scholastic', 15, 4.7, 'Harry Potter and the Chamber of Secrets', NOW(), NOW(), 2, 1, 1),
+  ('9780553293357', 15.99, '2002-08-01', 'Bantam', 8, 4.6, 'Fahrenheit 451', NOW(), NOW(), 1, 1, 1),
+  ('9780307592736', 18.99, '2012-06-05', 'Doubleday', 12, 4.8, 'The Hunger Games', NOW(), NOW(), 3, 1, 1),
+  ('9780316769488', 10.99, '1951-07-16', 'Little, Brown and Company', 20, 4.2, 'The Catcher in the Rye', NOW(), NOW(), 1, 1, 1),
+  ('9780061120084', 22.99, '2005-05-31', 'HarperCollins', 25, 4.9, 'The Da Vinci Code', NOW(), NOW(), 2, 1, 1),
+  ('9780060878783', 14.99, '2009-10-13', 'HarperCollins', 18, 4.4, 'The Road', NOW(), NOW(), 3, 1, 1),
+  ('9780679781585', 11.99, '1996-03-01', 'Vintage Books', 30, 4.6, 'Slaughterhouse-Five', NOW(), NOW(), 1, 1, 1),
+  ('9780375708113', 13.99, '2000-03-28', 'Vintage', 10, 4.5, 'The Brothers Karamazov', NOW(), NOW(), 2, 1, 1),
+  ('9780345391803', 9.99, '1993-05-01', 'Delacorte Press', 35, 4.3, 'The Princess Bride', NOW(), NOW(), 3, 1, 1),
+  ('9780316337834', 25.99, '2014-01-01', 'St. Martin\'s Press', 22, 4.7, 'The Goldfinch', NOW(), NOW(), 1, 1, 1),
+  ('9780439139601', 16.99, '2000-06-01', 'Scholastic', 14, 4.8, 'Harry Potter and the Goblet of Fire', NOW(), NOW(), 2, 1, 1),
+  ('9780140270904', 12.49, '1993-06-01', 'Penguin Books', 17, 4.6, 'The Remains of the Day', NOW(), NOW(), 1, 1, 1),
+  ('9780679722762', 13.49, '1992-07-01', 'Penguin Classics', 20, 4.5, 'Pride and Prejudice', NOW(), NOW(), 2, 1, 1),
+  ('9780385472579', 19.99, '2003-09-23', 'Anchor Books', 10, 4.4, 'Middlesex', NOW(), NOW(), 3, 1, 1),
+  ('9780142437230', 10.49, '2003-04-01', 'Penguin Classics', 25, 4.6, 'The Picture of Dorian Gray', NOW(), NOW(), 1, 1, 1),
+  ('9781501110368', 13.99, '2015-06-02', 'Scribner', 14, 4.7, 'The Martian', NOW(), NOW(), 2, 1, 1),
+  ('9780525562785', 17.99, '2017-06-13', 'Viking', 16, 4.5, 'The Underground Railroad', NOW(), NOW(), 3, 1, 1),
+  ('9781408855652', 16.99, '2016-06-02', 'Bloomsbury', 20, 4.8, 'Harry Potter and the Cursed Child', NOW(), NOW(), 1, 1, 1),
+  ('9780143127796', 11.49, '2015-03-24', 'Penguin Books', 22, 4.4, 'The Alchemist', NOW(), NOW(), 2, 1, 1),
+  ('9780385732550', 14.99, '2011-04-01', 'Scholastic', 12, 4.3, 'Mockingjay', NOW(), NOW(), 3, 1, 1),
+  ('9780374531556', 12.49, '2011-02-08', 'Farrar, Straus and Giroux', 8, 4.5, 'The Art of Fielding', NOW(), NOW(), 1, 1, 1),
+  ('9780439785969', 18.99, '2005-10-01', 'Scholastic', 20, 4.8, 'Harry Potter and the Half-Blood Prince', NOW(), NOW(), 2, 1, 1),
+  ('9780316055437', 14.49, '2012-08-07', 'Little, Brown and Company', 18, 4.6, 'The Casual Vacancy', NOW(), NOW(), 3, 1, 1),
+  ('9780735211105', 22.99, '2017-04-11', 'Viking', 16, 4.9, 'Educated', NOW(), NOW(), 1, 1, 1),
+  ('9780062129005', 21.99, '2015-05-26', 'HarperOne', 12, 4.7, 'The Life-Changing Magic of Tidying Up', NOW(), NOW(), 2, 1, 1);
