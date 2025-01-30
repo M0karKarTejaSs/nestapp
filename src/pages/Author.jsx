@@ -117,7 +117,7 @@ const Author = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormSh
                                 <li><a className="active" href="#">Home</a></li>
                             </ul>
                         </div>
-                        <button onClick={() => setIsAddAuthor(true)} className="btn btn-success">Add Author</button>
+                        <button onClick={() => setIsAddAuthor(true)} className="btnadd btn-success">Add Author</button>
                     </div>
 
                     {!isAddAuthor ? (
