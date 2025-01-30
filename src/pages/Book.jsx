@@ -8,6 +8,7 @@ import Sidebar from '../components/Sidebar';
 import DataTable from '../components/DataTable';
 import Navbar from '../components/Navbar';
 import GenericForm from '../components/GenericForm';
+import Footer from "../components/Footer"
 
 const API_BOOK_URL = 'http://localhost:8080/api/book';
 const API_AUTHOR_URL = 'http://localhost:8080/api/author';
@@ -197,7 +198,7 @@ const Book = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormShow
                                 <li><a className="active" href="#">Home</a></li>
                             </ul>
                         </div>
-                        <button onClick={() => setIsAddBook(true)} className="btn btn-success">Add Book</button>
+                        <button onClick={() => setIsAddBook(true)} className="btnadd btn-success">Add Book</button>
                     </div>
 
                     {!isAddBook ? (
@@ -333,6 +334,7 @@ const Book = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormShow
                     )}
                     <ToastContainer />
                 </main>
+                <Footer />
             </section>
         </section>
     );

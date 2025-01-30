@@ -8,6 +8,7 @@ import Sidebar from '../components/Sidebar';
 import DataTable from '../components/DataTable';
 import Navbar from '../components/Navbar';
 import GenericForm from '../components/GenericForm';
+import Footer from "../components/Footer"
 
 const API_URL = 'http://localhost:8080/api/author';
 
@@ -148,6 +149,7 @@ const Author = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormSh
                     )}
                     <ToastContainer />
                 </main>
+                <Footer />
             </section>
         </section>
     );

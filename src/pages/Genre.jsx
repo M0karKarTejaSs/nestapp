@@ -7,7 +7,8 @@ import { jwtDecode } from 'jwt-decode';
 import Sidebar from '../components/Sidebar';
 import DataTable from '../components/DataTable.js';
 import Navbar from '../components/Navbar';
-import GenreForm from '../components/GenreForm'; 
+import GenreForm from '../components/GenreForm';
+import Footer from "../components/Footer"
 
 const Genre = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormShown, handleSearchButtonClick }) => {
   const [genres, setGenres] = useState([]);
@@ -123,10 +124,10 @@ const Genre = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormSho
               <ul className="breadcrumb">
                 <li><a href="#">Genre</a></li>
                 <li><i className="bx bx-chevron-right"></i></li>
-                
+
               </ul>
             </div>
-            <button onClick={() => setIsAddGenre(true)} className="btn btn-success">Add Genre</button>
+            <button onClick={() => setIsAddGenre(true)} className="btnadd btn-success">Add Genre</button>
           </div>
 
           {!isAddGenre ? (
@@ -149,6 +150,7 @@ const Genre = ({ toggleSidebar, isSidebarHidden, toggleDarkMode, isSearchFormSho
           )}
           <ToastContainer />
         </main>
+        <Footer />
       </section>
     </section>
   );

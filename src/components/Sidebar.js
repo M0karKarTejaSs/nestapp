@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import handleLogout from '../components/Logout';
-
+import Footer from './Footer';
 const Sidebar = ({ isSidebarHidden }) => {
   const location = useLocation();
 
@@ -61,6 +61,8 @@ const Sidebar = ({ isSidebarHidden }) => {
           </Link>
         </li>
       </ul>
+      <Footer />
+
     </section>
   );
 };

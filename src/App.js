@@ -7,8 +7,8 @@ import Genre from "./pages/Genre";
 import Book from "./pages/Book";
 import Author from "./pages/Author";
 import "./App.css";
-import { useDashboard } from "../src/pages/useDashboard"
-import ForgotPasswordModal from "./pages/ForgotPasswordModal"
+import { useDashboard } from "../src/pages/useDashboard";
+import ForgotPasswordModal from "./pages/ForgotPasswordModal";
 
 function App() {
   const [isSignUpMode, setIsSignUpMode] = useState(false);
@@ -17,6 +17,9 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [showPasswords, setShowPasswords] = useState(false);
 
+  const { isSidebarHidden, isSearchFormShown, isDarkMode, toggleSidebar, toggleDarkMode, handleSearchButtonClick } = useDashboard();
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=!])[A-Za-z\d@#$%^&+=!]{6,}$/;
+
   const handleChange = (e, isSignUp) => {
     const setter = isSignUp ? setSignUpData : setSignInData;
     setter((prevData) => ({ ...prevData, [e.target.name]: e.target.value }));
@@ -24,6 +27,13 @@ function App() {
 
   const handleSignIn = async (e) => {
     e.preventDefault();
+
+    // Check if password matches the regex
+    if (!passwordRegex.test(signInData.password)) {
+      toast.error("Password must be alphanumeric.", { position: "top-right", autoClose: 3000 });
+      return;
+    }
+
     try {
       const response = await fetch("http://localhost:8080/auth/generateToken", {
         method: "POST",
@@ -32,17 +42,15 @@ function App() {
       });
 
       if (response.ok) {
+        const responseData = await response.json();
         toast.success("Login successful!", { position: "top-right", autoClose: 3000 });
         setLoggedIn(true);
-        const responseData = await response.json(); // Parse the JSON from the response
-        console.log(responseData.data, "Parsed response");
         localStorage.setItem("AuthToken", btoa(responseData.data));
-
       } else {
         toast.error("Invalid credentials, please try again.", { position: "top-right", autoClose: 3000 });
       }
     } catch (error) {
-      toast.error("Server error occurred. Please try again later.", { position: "top-center", autoClose: 3000 });
+      toast.error("Server error occurred. Please try again later.", { position: "top-right", autoClose: 3000 });
       console.error(error);
     } finally {
       setSignInData({ email: "", password: "" });
@@ -51,8 +59,15 @@ function App() {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
+
+    // Check if password matches the regex
+    if (!passwordRegex.test(signUpData.password)) {
+      toast.error("Password must be alphanumeric.", { position: "top-right", autoClose: 3000 });
+      return;
+    }
+
     if (signUpData.password !== signUpData.confirm_password) {
-      toast.error("Password and Confirm Password don't match.", { position: "top-center", autoClose: 3000 });
+      toast.error("Password and Confirm Password don't match.", { position: "top-right", autoClose: 3000 });
       return;
     }
 
@@ -60,7 +75,12 @@ function App() {
       const response = await fetch("http://localhost:8080/auth/addNewUser", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: signUpData?.name ?? signUpData?.email?.split('@')?.[0], username: signUpData.email, email: signUpData.email, password: signUpData.password, roles: "ROLE_USER" }),
+        body: JSON.stringify({
+          name: signUpData?.name ?? signUpData?.email?.split('@')[0],
+          email: signUpData.email,
+          password: signUpData.password,
+          roles: "ROLE_USER"
+        }),
       });
       if (response.ok) {
         toast.success("Sign Up successful! Redirecting to login.", { position: "top-right", autoClose: 3000 });
@@ -70,21 +90,11 @@ function App() {
         toast.error("Sign Up Failed, please try again.", { position: "top-right", autoClose: 3000 });
       }
     } catch (error) {
-      toast.error("Server error occurred. Please try again later.", { position: "top-center", autoClose: 3000 });
+      toast.error("Server error occurred. Please try again later.", { position: "top-right", autoClose: 3000 });
       console.error(error);
     }
   };
 
-  const {
-    isSidebarHidden,
-    isSearchFormShown,
-    isDarkMode,
-    toggleSidebar,
-    toggleDarkMode,
-    handleSearchButtonClick,
-  } = useDashboard();
-
-  // instead make after login api should be authenticated so automatically my work will file logout
   return (
     <Router>
       <ToastContainer />
@@ -101,7 +111,6 @@ function App() {
                   <h1 className="fixed-logo-content" style={{ color: isSignUpMode ? "#9d00ff" : "#ffffff" }}>Nest Book</h1>
 
                   <div className="signin-signup">
-                    {/* Sign In Form */}
                     <form onSubmit={handleSignIn} className="sign-in-form">
                       <h2>Sign in</h2>
                       {["username", "password"].map((field) => (
@@ -127,44 +136,19 @@ function App() {
                       <ForgotPasswordModal />
                     </form>
 
-                    {/* Sign Up Form */}
                     <form onSubmit={handleSignUp} className="sign-up-form">
                       <h2>Sign up</h2>
-
-                      {/* Name Field */}
-                      <input
-                        className="flds"
-                        type="text"
-                        name="name"
-                        value={signUpData.name}
-                        onChange={(e) => handleChange(e, true)}
-                        placeholder="Name"
-                      />
-
-                      {/* Email Field */}
-                      <input
-                        className="flds"
-                        type="email"
-                        name="email"
-                        value={signUpData.email}
-                        onChange={(e) => handleChange(e, true)}
-                        placeholder="Email"
-                      />
-
-                      {/* Password and Confirm Password Fields */}
-                      {["password", "confirm_password"].map((field) => (
+                      {["name", "email", "password", "confirm_password"].map((field) => (
                         <input
                           key={field}
                           className="flds"
-                          type={field.includes("password") ? (showPasswords ? "text" : "password") : "email"}
+                          type={field.includes("password") ? (showPasswords ? "text" : "password") : "text"}
                           name={field}
                           value={signUpData[field]}
                           onChange={(e) => handleChange(e, true)}
                           placeholder={field.replace("_", " ").replace(/^./, (str) => str.toUpperCase())}
                         />
                       ))}
-
-                      {/* Show Password Toggle */}
                       <label style={{ marginRight: "10px" }}>
                         <input
                           type="checkbox"
@@ -173,14 +157,9 @@ function App() {
                         />
                         <span style={{ marginLeft: "5px" }}>Show Passwords</span>
                       </label>
-
                       <input type="submit" value="Sign Up" className="btn" />
                     </form>
-
                   </div>
-
-
-
                 </div>
 
                 <div className="panels-container">
@@ -202,58 +181,28 @@ function App() {
                     <img src="/assets/register.svg" className="image" alt="Register" />
                   </div>
                 </div>
-
-                <footer className="footer">
-                  <p>Created by <strong>Tech Titans</strong></p>
-                </footer>
               </div>
             )
           }
         />
+        
+        {/* Protected Routes */}
         <Route
           path="/dashboard"
-          element={
-            <Dashboard
-              isSidebarHidden={isSidebarHidden}
-              isSearchFormShown={isSearchFormShown}
-              isDarkMode={isDarkMode}
-              toggleSidebar={toggleSidebar}
-              toggleDarkMode={toggleDarkMode}
-              handleSearchButtonClick={handleSearchButtonClick}
-            />
-          }
+          element={localStorage.getItem('AuthToken') ? <Dashboard {...{ isSidebarHidden, isSearchFormShown, isDarkMode, toggleSidebar, toggleDarkMode, handleSearchButtonClick }} /> : <Navigate to="/" />}
         />
-
-
-
-        <Route path="/genre" element={<Genre
-          isSidebarHidden={isSidebarHidden}
-          isSearchFormShown={isSearchFormShown}
-          isDarkMode={isDarkMode}
-          toggleSidebar={toggleSidebar}
-          toggleDarkMode={toggleDarkMode}
-          handleSearchButtonClick={handleSearchButtonClick}
-        />} />
-
-        <Route path="/book" element={<Book
-          isSidebarHidden={isSidebarHidden}
-          isSearchFormShown={isSearchFormShown}
-          isDarkMode={isDarkMode}
-          toggleSidebar={toggleSidebar}
-          toggleDarkMode={toggleDarkMode}
-          handleSearchButtonClick={handleSearchButtonClick}
-        />} />
-
-        <Route path="/author" element={<Author
-          isSidebarHidden={isSidebarHidden}
-          isSearchFormShown={isSearchFormShown}
-          isDarkMode={isDarkMode}
-          toggleSidebar={toggleSidebar}
-          toggleDarkMode={toggleDarkMode}
-          handleSearchButtonClick={handleSearchButtonClick}
-        />} />
-
-        {/* <Route path="/dashboard" element={<DashboardTest />} /> */}
+        <Route
+          path="/genre"
+          element={localStorage.getItem('AuthToken') ? <Genre {...{ isSidebarHidden, isSearchFormShown, isDarkMode, toggleSidebar, toggleDarkMode, handleSearchButtonClick }} /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/book"
+          element={localStorage.getItem('AuthToken') ? <Book {...{ isSidebarHidden, isSearchFormShown, isDarkMode, toggleSidebar, toggleDarkMode, handleSearchButtonClick }} /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/author"
+          element={localStorage.getItem('AuthToken') ? <Author {...{ isSidebarHidden, isSearchFormShown, isDarkMode, toggleSidebar, toggleDarkMode, handleSearchButtonClick }} /> : <Navigate to="/" />}
+        />
       </Routes>
     </Router>
   );

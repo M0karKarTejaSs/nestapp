@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 import { retToken } from '../AuthToken';
-import { toast, ToastContainer } from 'react-toastify';
 import { jwtDecode } from 'jwt-decode';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import Footer from "../components/Footer";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -18,7 +18,7 @@ const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode,
     genres: 0,
   });
 
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [errorMsg, setErrorMsg] = useState(""); // State for error messages
 
   const API_URLS = {
     books: 'http://localhost:8080/api/book',
@@ -27,39 +27,44 @@ const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode,
   };
 
   useEffect(() => {
-    const token = retToken();
-    if (token) {
-      const decoded = jwtDecode(token);
-      fetchData('books', decoded.userId);
-      fetchData('authors', decoded.userId);
-      fetchData('genres', decoded.userId);
-    }
-  }, []);
+    const fetchData = async (type, userId) => {
+      const API_URL = API_URLS[type];
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: retToken() },
+          body: JSON.stringify({ action: 'READ_ALL', userId }),
+        });
 
-  const fetchData = async (type, userId) => {
-    const API_URL = API_URLS[type];
-    try {
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: retToken() },
-        body: JSON.stringify({ action: 'READ_ALL', userId }),
-      });
-
-      if (!response.ok) {
-        const errorMessage = await response.text();
-        toast.error(errorMessage);
-        return;
+        if (!response.ok) throw new Error(`No data found for ${type}`);
+  
+        const data = await response.json();
+        setCounts((prevCounts) => ({
+          ...prevCounts,
+          [type]: data?.length || 0,
+        }));
+      } catch (error) {
+        return error.message;
       }
+    };
 
-      const data = await response.json();
-      setCounts((prevCounts) => ({
-        ...prevCounts,
-        [type]: data.length,
-      }));
-    } catch (error) {
-      toast.error(`Error fetching ${type}. Please try again later.`);
-    }
-  };
+    const loadData = async () => {
+      const token = retToken();
+      if (token) {
+        const decoded = jwtDecode(token);
+        const errors = await Promise.all([
+          fetchData('books', decoded.userId),
+          fetchData('authors', decoded.userId),
+          fetchData('genres', decoded.userId),
+        ]);
+
+        const filteredErrors = errors.filter(Boolean); // Remove null/undefined errors
+        setErrorMsg(filteredErrors.join(' ')); // Combine errors into a single message
+      }
+    };
+
+    loadData(); // Call the function to load data when useEffect runs
+  }, []);
 
   const chartData = {
     labels: ['Books', 'Authors', 'Genres'],
@@ -78,14 +83,6 @@ const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode,
     "/books/narnia.jpg",
     "/books/stephen.jpg"
   ];
-
-  const handlePrev = () => {
-    setActiveIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
-  };
-
-  const handleNext = () => {
-    setActiveIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
-  };
 
   return (
     <section id="dashboard">
@@ -106,6 +103,7 @@ const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode,
                 <li><i className="bx bx-chevron-right"></i></li>
                 <li><Link to="#" className="active">Home</Link></li>
               </ul>
+              {errorMsg && <p className="error-message" style={{ color: 'red' }}>{errorMsg}</p>}
             </div>
           </div>
 
@@ -138,7 +136,7 @@ const Dashboard = ({ toggleSidebar, isSidebarHidden, isDarkMode, toggleDarkMode,
               </div>
             </div>
           </div>
-          <ToastContainer />
+
         </main>
       </section>
     </section>

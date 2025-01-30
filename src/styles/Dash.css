@@ -773,3 +773,25 @@ body {
 .carousel-control-next {
 	right: 10px;
 }
+
+
+
+
+.profile {
+	display: flex;
+	align-items: center; /* Align the image and text vertically */
+	gap: 10px; /* Space between the image and the text */
+	text-decoration: none; /* Remove underline from the link */
+  }
+  
+  .profile img {
+	width: 40px; /* Adjust size of the profile picture */
+	height: 40px;
+	border-radius: 50%; /* Make the image circular */
+  }
+  
+  .profile-name {
+	font-size: 1rem;
+	font-weight: bold;
+  }
+  
